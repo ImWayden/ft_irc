@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   r_strings.hpp                                      :+:      :+:    :+:   */
+/*   CmdUser.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/01 15:30:25 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/06 15:57:25 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/09 20:20:43 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/11 19:20:20 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef R_STRINGS_HPP
-# define R_STRINGS_HPP
+#ifndef CMDUSER_HPP
+# define CMDUSER_HPP
 
-
-
-#define R_ABNF_DIGIT "0123456789"
-#define R_ABNF_ALPHA "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-#define R_ABNF_SPECIAL "[]\\`_^{|}"
-#define R_ABNF_DASH "-"
-#define R_ABNF_NICKNAME R_ABNF_DIGIT R_ABNF_ALPHA R_ABNF_SPECIAL R_ABNF_DASH
+#include "Cmd.hpp"
 
 #define R_ABNF_USER_NOUSECHAR "\0\r\n @"
+#define NICK_MIN_LENGTH 9 // need to recheck if i need it or not
 
-#endif 
+class CmdUser {
+public:
+	CmdUser();
+	~CmdUser();
+	CmdUser(const CmdUser &other);
+	CmdUser &operator=(const CmdUser &other);
+	void execute(const CommandData &cmd);
+private:
+	bool checkusername(const std::string &username);
+};
+
+
+
+#endif

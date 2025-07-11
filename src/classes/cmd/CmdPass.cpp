@@ -1,16 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
+/*   CmdPass.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/04 00:59:57 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/04 01:00:12 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/09 03:35:47 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/11 19:19:43 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#include "cmd/CmdPass.hpp"
 
-#endif	// CLIENT_HPP
+
+void CmdPass::execute(const CommandData &cmd)
+{
+	Client *client = cmd.client;
+	
+	if(client->isAuthenticated()) 
+	{
+		//ERR_ALREADYREGISTRED
+		return;
+	}
+	if(cmd.args.size() < 1)
+	{
+		//ERR_NEEDMOREPARAMS
+		return;
+	}
+	client->setAuthStatus(PASSWORD_RECEIVED);
+	client->setPassword(cmd.args[0]);
+}
+
+

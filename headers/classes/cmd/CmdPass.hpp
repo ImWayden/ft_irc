@@ -1,19 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Include_classes.hpp                                :+:      :+:    :+:   */
+/*   CmdPass.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/01 16:14:59 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/01 16:15:14 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/09 13:07:46 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/11 19:19:56 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INCLUDE_CLASSES_HPP
-# define INCLUDE_CLASSES_HPP
+#ifndef CMDPASS_HPP
+#define CMDPASS_HPP
 
-#include "classes/PasswordManager.hpp"
-#include "classes/PortManager.hpp"
+#include "Cmd.hpp"
 
-#endif // INCLUDE_CLASSES_HPP
+class CmdPass {
+public:
+	CmdPass();
+	~CmdPass();
+	CmdPass(const CmdPass &other);
+	CmdPass &operator=(const CmdPass &other);
+	void execute(const CommandData &cmd);
+private:
+};
+
+
+#endif

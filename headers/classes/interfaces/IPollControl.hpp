@@ -1,21 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   includes.hpp                                       :+:      :+:    :+:   */
+/*   IPollControl.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/01 15:43:51 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/01 16:18:01 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/11 20:40:18 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/11 22:34:12 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INCLUDES_HPP
-# define INCLUDES_HPP
+#ifndef IPOLLCONTROL_HPP
+#define IPOLLCONTROL_HPP
 
-#include <iostream>
+#include <vector>
 
-#include "classes/include_classes.hpp"
-#include "ressources/include_ressources.hpp"
+class IPollControl {
+public:
+	virtual ~IPollControl() {}
+	virtual void setEvent(int fd, short events) = 0;
+};
+
+
 
 #endif

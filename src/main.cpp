@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:27:16 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/03 18:21:44 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/11 23:43:23 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,3 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-
-void echo_server(std::string port, std::string password)
-{
-
-}

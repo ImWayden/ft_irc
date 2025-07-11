@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   r_strings.hpp                                      :+:      :+:    :+:   */
+/*   Cmd.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/01 15:30:25 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/06 15:57:25 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/06 02:32:02 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/11 21:25:33 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef R_STRINGS_HPP
-# define R_STRINGS_HPP
+#ifndef CMD_HPP
+#define CMD_HPP
+
+#include "struct/struct.hpp"
+#include "utils/MessageMaker.hpp"
 
 
+/*
+kept in case i wanna go back to polymorphisme instead of the switch into cmd->execute() 
 
-#define R_ABNF_DIGIT "0123456789"
-#define R_ABNF_ALPHA "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-#define R_ABNF_SPECIAL "[]\\`_^{|}"
-#define R_ABNF_DASH "-"
-#define R_ABNF_NICKNAME R_ABNF_DIGIT R_ABNF_ALPHA R_ABNF_SPECIAL R_ABNF_DASH
-
-#define R_ABNF_USER_NOUSECHAR "\0\r\n @"
-
-#endif 
+class ICommand {
+public:
+	virtual void execute(CommandData &cmd) = 0;
+	virtual ~ICommand();
+private:
+};
+*/
+#endif

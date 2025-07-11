@@ -6,11 +6,11 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:06:07 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/01 16:22:05 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/09 02:16:01 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/PasswordManager.hpp"
+#include "PasswordManager.hpp"
 #include "ressources/r_numbers.hpp"
 
 PasswordManager::PasswordManager() : _password("") {}

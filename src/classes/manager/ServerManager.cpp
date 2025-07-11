@@ -6,28 +6,20 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 17:55:41 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/04 00:56:23 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/11 23:37:54 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/ServerManager.hpp"
-#include <iostream>
-#include <sys/types.h>      // types de base (ex: ssize_t)
-#include <sys/socket.h>     // socket(), bind(), listen(), accept()
-#include <netinet/in.h>     // sockaddr_in (IPv4)
-#include <arpa/inet.h>      // inet_pton(), inet_ntop()
-#include <unistd.h>         // close()
-#include <netdb.h>          // getaddrinfo(), freeaddrinfo()
-#include <cstring>          // memset()
-#include <fcntl.h> 
+#include "manager/ServerManager.hpp"
 
-ServerManager::ServerManager() : _portManager(), _passwordManager(), _pollFDManager() {}
+
+ServerManager::ServerManager() : _portManager(), _passwordManager(), _pollFDManager(), _clientManager(&_pollFDManager), _channelManager() {}
 
 ServerManager::ServerManager(const std::string &port, const std::string &password)
-	: _portManager(port), _passwordManager(password), _pollFDManager() {}
+	: _portManager(port), _passwordManager(password), _pollFDManager(), _clientManager(&_pollFDManager), _channelManager() {}
 
 ServerManager::ServerManager(const ServerManager &other)
-	: _portManager(other._portManager), _passwordManager(other._passwordManager), _pollFDManager(other._pollFDManager) {}
+	: _portManager(other._portManager), _passwordManager(other._passwordManager), _pollFDManager(other._pollFDManager), _clientManager(other._clientManager), _channelManager(other._channelManager) {}
 
 ServerManager::~ServerManager() {}
 
@@ -59,15 +51,15 @@ int ServerManager::Init()
 			perror("bind"); // replace with logging warning
 			continue;
 		}
-		_pollFDManager.addListenerFD(server_fd, POLLIN); // Add the socket to the poll manager
-		fcntl(server_fd, F_SETFL, fcntl(server_fd, F_GETFL, 0) | O_NONBLOCK);
+		_pollFDManager.addListenerFD(server_fd, POLLIN);
+		fcntl(server_fd, F_SETFL, O_NONBLOCK);
 		if (listen(server_fd, 5) == -1) {
-			perror("listen"); //replace with logging warning
+			perror("listen");
 			close(server_fd);
-			_pollFDManager.removeFD(server_fd); // Remove the socket from the poll manager
+			_pollFDManager.removeFD(server_fd);
 		}
 	}
-	freeaddrinfo(res); // free the linked list of addrinfo structure
+	freeaddrinfo(res);
 	if(_pollFDManager.getFds().empty()) {
 		std::cerr << "Failed to create server socket" << std::endl;
 		return -1;
@@ -76,14 +68,38 @@ int ServerManager::Init()
 
 int ServerManager::Update()
 {
-	
-	_pollFDManager.poll(-1); // Poll for events
-	std::vector<struct pollfd> upd_listener_fds = _pollFDManager.getUpdListenerFds();
-	_listenerManager.handlePollEvents(); // Handle events for listeners
-	
-	std::vector<struct pollfd> upd_clients_fds = _pollFDManager.getUpdClientFds();
-	
-	return 0;
+	_pollFDManager.Update();
+	_listenerManager.Update(_pollFDManager.getUpdatedListeners());
+	_clientManager.Update(_pollFDManager.getUpdatedClients());
+	_commandManager.Update(_clientManager.getUpdClients());
+	onUpdateFinish();
+}
+
+
+void ServerManager::onUpdateFinish()
+{
+	handleNewClients(_listenerManager.getnewClients());
+	handleQuittingClients(_clientManager.getQuittingClients());
+	_listenerManager.OnUpdateFinish();
+	_clientManager.OnUpdateFinish();
+	//_commandManager.OnUpdateFinish();
+	_pollFDManager.OnUpdateFinish();
+}
+
+void ServerManager::handleNewClients(std::vector<newClient> newclients) {
+	for (int i = 0; i < newclients.size(); ++i) {
+		newClient &client = newclients[i];
+		_pollFDManager.addClientFD(client.client_fd);
+		_clientManager.addClient(client.client_fd.fd, client.addr);
+	}
+}
+
+void ServerManager::handleQuittingClients(std::vector<Client *> quittingclients) {
+	for (int i = 0; i < quittingclients.size(); ++i) {
+		int fd = quittingclients[i]->getFd();
+		_pollFDManager.removeFD(fd);
+		_clientManager.removeClient(fd);
+	}
 }
 
 ServerManager &ServerManager::operator=(const ServerManager &other) {
@@ -101,5 +117,3 @@ const std::string &ServerManager::getPort() const {
 const std::string &ServerManager::getPassword() const {
 	return _passwordManager.getPassword();
 }
-
-// Note: The ServerManager class is designed to manage the server's port and password,

@@ -6,11 +6,11 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 22:26:23 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/04 00:18:13 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/11 22:22:06 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "classes/PollFDManager.hpp"
+#include "classes/manager/PollFDManager.hpp"
 
 PollFDManager::PollFDManager() {}
 PollFDManager::PollFDManager(const PollFDManager &other) : fds(other.fds) {}
@@ -47,6 +47,11 @@ void PollFDManager::addClientFD(int fd, short events) {
 	fds.push_back({fd, events, 0});
 }
 
+struct pollfd* PollFDManager::addClientFD(struct pollfd client_fd) {
+	fds.push_back(client_fd);
+	return &fds[fds.size() - 1];
+}
+
 void PollFDManager::OnUpdateFinish() {
 	upd_listeners.clear();
 	upd_clients.clear();
@@ -56,8 +61,8 @@ void PollFDManager::modifyFD(int fd, short events) {
 
 }
 
-int PollFDManager::poll(int timeout) {
-	int res = ::poll(fds.data(), fds.size(), timeout);
+int PollFDManager::Update() {
+	int res = ::poll(fds.data(), fds.size(), -1);
 	if (res < 0) {
 		perror("poll");
 		//placeholder for error handling

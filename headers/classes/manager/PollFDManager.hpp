@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 18:32:13 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/04 00:57:32 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/11 22:34:41 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@
 #include <unistd.h> // pour close()
 #include <cstdio>   // pour perror
 
-class PollFDManager
+
+
+class PollFDManager : public IPollControl
 {
 public:
 	PollFDManager();
@@ -29,14 +31,17 @@ public:
 	
 	void addListenerFD(int fd, short events);
 	void addClientFD(int fd, short events);
-	void addClientFD(std::vector<int> clients_fd, short events); 
+	struct pollfd* addClientFD(struct pollfd client_fd);
+	
 	void removeFD(int fd);
 	void OnUpdateFinish();
 	void modifyFD(int fd, short events);
-	int poll(int timeout = -1);
+	int Update();
+
+	virtual void setEvent(int fd, short events);
 	std::vector<struct pollfd> getFds() const;
-	std::vector<struct pollfd> getUpdListenerFds() const;
-	std::vector<struct pollfd> getUpdClientFds() const;
+	std::vector<struct pollfd> getUpdatedListeners() const;
+	std::vector<struct pollfd> getUpdatedClients() const;
 	// Closes all file descriptors and clears the list
 private:
 	void clearFds();

@@ -6,14 +6,24 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:37:18 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/04 00:53:27 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/11 23:34:39 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LISTENERMANAGER_HPP
 #define LISTENERMANAGER_HPP
 
+#include "interfaces/IPollControl.hpp"
 #include <vector>
+#include <poll.h>
+#include <sys/socket.h>
+#include <fcntl.h> 
+
+struct newClient {
+	struct pollfd pfd; // File descriptor for the client socket
+	struct sockaddr_storage addr; // Address of the client
+};
+
 class ListenerManager
 {
 public:
@@ -21,12 +31,15 @@ public:
 	ListenerManager(const ListenerManager &other);
 	~ListenerManager();
 	ListenerManager &operator=(const ListenerManager &other);
-	void handlePollEvents();
-	std::vector<struct pollfd> getnewClients();
+	
+	void Update(const std::vector<struct pollfd>& fds);
+	void OnUpdateFinish();
+	
+	std::vector<newClient> getnewClients();
 private:
-	std::vector<struct pollfd> updatedListeners; // List of listeners that need to be
-	std::vector<int> newClients; // List of new clients to be added
+	std::vector<newClient> _newclients; // List of new clients to be added
 };
+
 
 
 
