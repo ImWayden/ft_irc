@@ -6,19 +6,19 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 19:07:31 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:01:26 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 18:11:46 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "manager/CommandManager.hpp"
 
-CommandManager::CommandManager() 
+CommandManager::CommandManager(ServerManager* serverManager)
 {
 	_cmd_pass = CmdPass();
 	_cmd_nick = CmdNick(_serverManager->getClientManager());
 	_cmd_user = CmdUser();
 	_cmd_join = CmdJoin();
-	_cmd_quit = CmdQuit();
+	_cmd_quit = CmdQuit(_serverManager->getPollFDManager(), _serverManager->getChannelManager(), _serverManager->getClientManager());
 	_cmd_ping = CmdPing();
 	_cmd_pong = CmdPong();
 	_cmd_part = CmdPart();
@@ -29,7 +29,7 @@ CommandManager::CommandManager()
 	_cmd_mode = CmdMode();
 }
 
-CommandManager::CommandManager(const CommandManager &other) : _commands_onhold(other._commands_onhold), _cmds_client(other._cmds_client) {}
+CommandManager::CommandManager(const CommandManager &other) : _commands_onhold(other._commands_onhold), _cmds_client(other._cmds_client), _serverManager(other._serverManager) {}
 CommandManager::~CommandManager() {}
 
 CommandManager &CommandManager::operator=(const CommandManager &other) {
@@ -59,35 +59,20 @@ void CommandManager::executeCommand(const CommandData &cmd) {
         case H_NICK:   	return _cmd_nick.execute(cmd);
         case H_USER:   	return _cmd_user.execute(cmd);
         case H_QUIT:    return _cmd_quit.execute(cmd);
-        case H_PING:    cmd_ping(cmd); break;
-        case H_PONG:    cmd_pong(cmd); break;
+        case H_PING:    return _cmd_ping.execute(cmd);
+        case H_PONG:    return _cmd_pong.execute(cmd);
         case H_JOIN:    return _cmd_join.execute(cmd);
-        case H_PART:    cmd_part(cmd); break;
-        case H_PRIVMSG: cmd_privmsg(cmd); break;
-        case H_KICK:    cmd_kick(cmd); break;
-        case H_INVITE:  cmd_invite(cmd); break;
-        case H_TOPIC:   cmd_topic(cmd); break;
-        case H_MODE:    cmd_mode(cmd); break;
+        case H_PART:    return _cmd_part.execute(cmd);
+        case H_PRIVMSG: return _cmd_privmsg.execute(cmd);
+        case H_KICK:	return _cmd_kick.execute(cmd);
+        case H_INVITE:  return _cmd_invite.execute(cmd);
+        case H_TOPIC:   return _cmd_topic.execute(cmd);
+        case H_MODE:    return _cmd_mode.execute(cmd);
         default:
             // Commande inconnue ou non gérée
             break;
     }
 }
-
-//idk how to implement that should i add a global clock on the serv manager send a ping msg to client then wait create a commanddata struct 
-//the command data struct would contain the time of the ping and the maximum time of the pong then every loop we check if we received a pong
-void CommandManager::cmd_ping(const CommandData &cmd) 
-{
-	//answer with pong
-	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, true, 0, cmd.args[0]));
-}
-
-void CommandManager::cmd_pong(const CommandData &cmd) 
-{
-	//update the thing that send pings i guess
-	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, true, 0, cmd.args[0]));
-}
-
 
 /*
 PASS

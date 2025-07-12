@@ -1,36 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CmdQuit.hpp                                        :+:      :+:    :+:   */
+/*   CmdPong.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/09 20:10:59 by wayden            #+#    #+#             */
+/*   Created: 2025/07/12 00:52:29 by wayden            #+#    #+#             */
 /*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMDQUIT_HPP
-# define CMDQUIT_HPP
+#ifndef CMD_PONG_HPP
+# define CMD_PONG_HPP
 
 #include "utils/CmdUtils.hpp"
-#include "manager/PollFDManager.hpp"
-#include "manager/ChannelManager.hpp"
-#include "manager/ClientManager.hpp"
 
-class CmdQuit
-{
+class CmdPong {
 public:
-	CmdQuit();
-	CmdQuit(PollFDManager &pollfdManager, ChannelManager &channelManager, ClientManager &clientManager);
-	~CmdQuit();
-	CmdQuit(const CmdQuit &other);
-	CmdQuit &operator=(const CmdQuit &other);
+	CmdPong();
+	~CmdPong();
+	CmdPong(const CmdPong &other);
+	CmdPong &operator=(const CmdPong &other);
 	void execute(const CommandData &cmd);
 private:
-	PollFDManager* _pollfdManager;
-	ChannelManager* _channelManager;
-	ClientManager* _clientManager;
+	
 };
+
+
 
 #endif

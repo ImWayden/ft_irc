@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:33:37 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 22:59:48 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 22:24:45 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ const std::string& Client::getPassword() const{
 	return _data.password;
 }
 
-const std::vector<std::string>& Client::getChannels() const{
+const std::set<std::string>& Client::getChannels() const{
 	return _data.channels;
 }
 
@@ -84,11 +84,11 @@ void Client::setPassword(const std::string &password) {
 }
 
 void Client::setAuthStatus(int authStatus) {
-	_data.authstatus |= authStatus;
+	_auth_status |= authStatus;
 }
 
 bool Client::isAuthenticated() const {
-	if (_data.authstatus == FULLY_AUTHENTICATED)
+	if (_auth_status == FULLY_AUTHENTICATED)
 		return true;
 	return false;
 }
@@ -109,7 +109,7 @@ std::deque<ServerMessage_t>* Client::getMsgToSend() {
 }
 
 void Client::joinChannel(const std::string &channel) {
-	_data.channels.push_back(channel);
+	_data.channels.insert(channel);
 }
 
 void Client::appendToBuffer(const std::string &data) {

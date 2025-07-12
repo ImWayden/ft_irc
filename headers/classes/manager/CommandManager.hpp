@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 18:04:58 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 22:54:03 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 01:35:21 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 #include "cmd/CmdUser.hpp"
 #include "cmd/CmdJoin.hpp"
 #include "cmd/CmdQuit.hpp"
-/*
+
 #include "cmd/CmdPing.hpp"
 #include "cmd/CmdPong.hpp"
 #include "cmd/CmdPart.hpp"
@@ -39,7 +39,7 @@
 #include "cmd/CmdInvite.hpp"
 #include "cmd/CmdTopic.hpp"
 #include "cmd/CmdMode.hpp"
-*/
+
 
 /*
 PASS
@@ -81,16 +81,14 @@ private:
 	CmdUser _cmd_user;
 	CmdJoin _cmd_join;
 	CmdQuit _cmd_quit;
-/*
-	CmdPing _cmd_ping;
-	CmdPong _cmd_pong;
+	CmdPing _cmd_ping; //need to answer pong
+	CmdPong _cmd_pong; //need to update pingstatus
 	CmdPart _cmd_part;
 	CmdPrivmsg _cmd_privmsg;
 	CmdKick _cmd_kick;
 	CmdInvite _cmd_invite;
 	CmdTopic _cmd_topic;
 	CmdMode _cmd_mode;
-*/
 };
 
 

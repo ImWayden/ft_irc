@@ -6,26 +6,41 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 03:51:02 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:20:40 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 22:22:43 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cmd/CmdQuit.hpp"
 
+CmdQuit::CmdQuit() {}
+CmdQuit::CmdQuit(PollFDManager &pollfdManager, ChannelManager &channelManager, ClientManager &clientManager) : 
+	_pollfdManager(&pollfdManager), _channelManager(&channelManager), _clientManager(&clientManager) {}
+
+CmdQuit::~CmdQuit() {}
+
+CmdQuit::CmdQuit(const CmdQuit &other) : _pollfdManager(other._pollfdManager), _channelManager(other._channelManager), _clientManager(other._clientManager) {}
+
+CmdQuit &CmdQuit::operator=(const CmdQuit &other) {
+	if (this != &other) {
+		_pollfdManager = other._pollfdManager;
+		_channelManager = other._channelManager;
+		_clientManager = other._clientManager;
+	}
+	return *this;
+}
+
 void CmdQuit::execute(const CommandData &cmd) 
 {
-	std::vector<std::string> channels = cmd.client->getChannels();
+	std::set<std::string> channels = cmd.client->getChannels();
 	int fd = cmd.client->getFd();
 	std::string message;
 	if(cmd.args.size() > 0)
 		message = cmd.args[0];
 	else
 		message = ":disconnected from the server";
-	for (int i = 0; i < channels.size(); ++i) {
-		_channelManager->removeClientFromChannel(channels[i], cmd.client);
-		_channelManager->addMessageToChannel(channels[i], MessageMaker::MessageGenerator(cmd, true, 0, message));
-	}
-	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, true, 0, "Error msg")); //replace with ERROR msg
+	message = MessageMaker::MessageGenerator(cmd, true, 0, message);
+	_channelManager->removeClientFromAllChannels(cmd.client, message);
+	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, 0, ":disconnected from the server", "ERROR")); //replace with ERROR msg
 	cmd.client->setQuitStatus(QUITTING);
 	 // if following the RFC 2812 then i should probably send ERROR, if following the 1459 then i should send nothing, rfc is so vague 
 }

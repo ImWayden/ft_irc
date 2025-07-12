@@ -1,36 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CmdQuit.hpp                                        :+:      :+:    :+:   */
+/*   CmdPart.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/09 20:10:59 by wayden            #+#    #+#             */
+/*   Created: 2025/07/12 01:11:13 by wayden            #+#    #+#             */
 /*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMDQUIT_HPP
-# define CMDQUIT_HPP
+#ifndef CMDPART_HPP
+#define CMDPART_HPP
 
 #include "utils/CmdUtils.hpp"
-#include "manager/PollFDManager.hpp"
-#include "manager/ChannelManager.hpp"
-#include "manager/ClientManager.hpp"
 
-class CmdQuit
-{
+
+class CmdPart {
 public:
-	CmdQuit();
-	CmdQuit(PollFDManager &pollfdManager, ChannelManager &channelManager, ClientManager &clientManager);
-	~CmdQuit();
-	CmdQuit(const CmdQuit &other);
-	CmdQuit &operator=(const CmdQuit &other);
+	CmdPart();
+	CmdPart(CmdPart const & src);
+	~CmdPart();
+	CmdPart & operator=(CmdPart const & rhs);
 	void execute(const CommandData &cmd);
 private:
-	PollFDManager* _pollfdManager;
-	ChannelManager* _channelManager;
-	ClientManager* _clientManager;
+
 };
+
+//TODO  check PART Documentation 
 
 #endif

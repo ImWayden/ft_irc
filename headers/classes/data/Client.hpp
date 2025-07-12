@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:59:57 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:30:57 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 21:28:53 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,11 @@
 #define QUITTING 0b001
 #define QUITTING_DONE 0b010
 
+#define PING_WAIT 0b000
+#define PING_SENT 0b001
+#define PONG_RECEIVED 0b010
+
+
 #define BUFFER_SIZE 1024 // Define a buffer size for reading data
 
 class Client {
@@ -47,7 +52,7 @@ public:
 	const std::string& getHostname() const;
 	const std::string& getPrefix();
 	const std::string& getPassword() const;
-	const std::vector<std::string> &getChannels() const;
+	const std::set<std::string> &getChannels() const;
 	const std::string& getServerName() const;
 	const int getQuitStatus() const;
 	
@@ -58,6 +63,7 @@ public:
 	void setPassword(const std::string &password);
 	void setAuthStatus(int authStatus);
 	void setQuitStatus(int quit_status);
+	void setPingStatus(int ping_status);
 	
 	std::vector<ClientMessage_t>* Client::getMsgReceived();
 	std::deque<ServerMessage_t>* getMsgToSend();
@@ -68,6 +74,8 @@ public:
 	void addMessage_out(const std::string &message);
 	void sendMessages();
 	void joinChannel(const std::string &channel);
+	//void leaveChannel(const std::string &channel);
+	//void leaveAllChannel(const std::string &channel);
 	// Placeholder for other client-related methods
 private:
 	ClientData _data; // Client data structure
@@ -81,8 +89,9 @@ private:
 	std::vector<ClientMessage_t> _msg_received; // List of messages from the client
 	std::deque<ServerMessage_t> _msg_tosend; // List of messages to write back to the client
 
-	int _quit_status;
-	int _authstatus;
+	char _quit_status;
+	char _auth_status;
+	char _ping_status;
 	//bool is_getting_pinged;
 };
 

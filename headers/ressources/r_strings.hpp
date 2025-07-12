@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 15:30:25 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/06 15:57:25 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 23:04:33 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,5 @@
 # define R_STRINGS_HPP
 
 
-
-#define R_ABNF_DIGIT "0123456789"
-#define R_ABNF_ALPHA "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-#define R_ABNF_SPECIAL "[]\\`_^{|}"
-#define R_ABNF_DASH "-"
-#define R_ABNF_NICKNAME R_ABNF_DIGIT R_ABNF_ALPHA R_ABNF_SPECIAL R_ABNF_DASH
-
-#define R_ABNF_USER_NOUSECHAR "\0\r\n @"
 
 #endif 

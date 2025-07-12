@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CmdPass.hpp                                        :+:      :+:    :+:   */
+/*   CmdTopic.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/09 13:07:46 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/12 01:31:17 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/12 01:38:03 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMDPASS_HPP
-#define CMDPASS_HPP
+#include "cmd/CmdTopic.hpp"
 
-#include "utils/CmdUtils.hpp"
+CmdTopic::CmdTopic() {}
 
-class CmdPass {
-public:
-	CmdPass();
-	~CmdPass();
-	CmdPass(const CmdPass &other);
-	CmdPass &operator=(const CmdPass &other);
-	void execute(const CommandData &cmd);
-private:
-};
+CmdTopic::~CmdTopic() {}
 
+CmdTopic::CmdTopic(const CmdTopic &other) {
+	(void)other;
+}
 
-#endif
+CmdTopic &CmdTopic::operator=(const CmdTopic &other) {
+	(void)other;
+	return (*this);
+}
+
+void CmdTopic::execute(const CommandData &cmd) {}

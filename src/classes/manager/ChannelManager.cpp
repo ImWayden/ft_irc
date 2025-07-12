@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 01:48:45 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 14:19:53 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 22:20:00 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ Channel* ChannelManager::getChannel(const std::string &name){
 	return nullptr;
 }
 
-void ChannelManager::removeClientFromChannel(std::string &name, Client *client) {
+void ChannelManager::removeClientFromChannel(const std::string &name, Client *client) {
 	_channels[name].removeClient(client);
 }
 
@@ -67,10 +67,22 @@ void ChannelManager::removeClientFromChannels(std::vector<std::string> &names, C
 	}
 }
 
-void ChannelManager::removeClientFromAllChannels(Client* client) {
+void ChannelManager::removeClientFromChannels(std::set<std::string> &names, Client *client, std::string message) {
+	std::set<std::string>::iterator it = names.begin();
+	while (it != names.end()) {
+		_channels[*it].removeClient(client);
+		if (!message.empty())
+			_channels[*it].broadcast(message, client);
+		it++;
+	}
+}
+
+void ChannelManager::removeClientFromAllChannels(Client* client, std::string message) {
 	std::map<std::string, Channel>::iterator it = _channels.begin();
 	while (it != _channels.end()) {
 		it->second.removeClient(client);
+		if (!message.empty())
+			it->second.broadcast(message, client);
 		it++;
 	}
 }

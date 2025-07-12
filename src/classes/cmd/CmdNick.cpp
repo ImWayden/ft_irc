@@ -6,15 +6,15 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 19:44:07 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:17:19 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 18:14:31 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/cmd/CmdNick.hpp"
 
+CmdNick::CmdNick() {}
 
-
-CmdNick::CmdNick(ClientManager* clientManager) : _clientManager(clientManager) {}
+CmdNick::CmdNick(ClientManager& clientManager) : _clientManager(&clientManager) {}
 
 CmdNick::~CmdNick() {}
 

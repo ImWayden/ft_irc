@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 19:59:40 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 17:36:06 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 22:24:12 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,23 @@ std::string MessageMaker::int_to_string(int value) {
     return oss.str();
 }
 
-ServerMessage_t MessageMaker::makeMessageCode(const CommandData &cmd, int msg_code) {
+ServerMessage_t MessageMaker::makeMessageCode(const CommandData &cmd, int msg_code, std::string msg) {
 	ServerMessage_t messageCode;
-	if(msg_code > 0)
+	if(!msg.empty())
+		messageCode += msg;
+	else if(msg_code > 0)
 		messageCode += int_to_string(msg_code);
 	else
 		messageCode += cmd.cmd;
 	return messageCode;
 }
 
-ServerMessage_t MessageMaker::MessageGenerator(const CommandData &cmd, bool isFromClient, int msg_code, std::string param) 
+ServerMessage_t MessageMaker::MessageGenerator(const CommandData &cmd, bool isFromClient, int msg_code, std::string param, std::string msg_string) 
 {
 	ServerMessage_t message;
 	message += makePrefix(cmd, isFromClient);
 	message += " ";
-	message += makeMessageCode(cmd, msg_code);
+	message += makeMessageCode(cmd, msg_code, msg_string);
 	message += " ";
 	message += param;
 	message += " ";

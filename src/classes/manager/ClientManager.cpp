@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:21:09 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:41:30 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 21:22:25 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@ void ClientManager::addClient(int fd, struct sockaddr_storage addr) {
 	_clients[fd].setAddr(addr);
 }
 
+
+void ClientManager::removeClient(int fd) {
+	_clients.erase(fd);
+}
+
 void ClientManager::Update(const std::vector<struct pollfd> fds) {
 	for (size_t i = 0; i < fds.size(); ++i) {
 		int fd = fds[i].fd;
@@ -53,12 +58,19 @@ void ClientManager::Update(const std::vector<struct pollfd> fds) {
 	}
 }
 
+
+Client* ClientManager::getClientByNickname(std::string nickname) {
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+		if (it->second.getNickname() == nickname)
+			return &it->second;
+	return NULL;
+}
+
 //not optimized i should have a set of clients nicknames ready to use, but that signify adding nicknames during the nick command, annoying asf
 std::set<std::string> ClientManager::getNicknames() {
 	std::set<std::string> nicknames;
-	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 		nicknames.insert(it->second.getNickname());
-	}
 	return nicknames;
 }
 

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:06:55 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 21:25:21 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 22:19:29 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,10 @@ public:
 	
 	Channel* getChannel(const std::string &name);
 
-	void removeClientFromChannel(std::string &name, Client *client);
+	void removeClientFromChannel(const std::string &name, Client *client);
 	void removeClientFromChannels(std::vector<std::string> &names, Client *client);
-	void removeClientFromAllChannels(Client* client);
+	void removeClientFromChannels(std::set<std::string> &names, Client *client, std::string message = "");
+	void removeClientFromAllChannels(Client* client, std::string message = "");
 
 	void addMessageToChannel(const std::string &name, ClientMessage_t message);
 private:

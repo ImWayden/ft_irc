@@ -6,14 +6,14 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:14:31 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 19:21:17 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 23:42:22 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CMDJOIN_HPP
 # define CMDJOIN_HPP
 
-#include "Cmd.hpp"
+#include "utils/CmdUtils.hpp"
 #include "manager/ChannelManager.hpp"
 
 #include <vector>
@@ -21,11 +21,9 @@
 
 
 //ERR_NEEDMOREPARAMS
-#define ERRCODE_NEEDMOREPARAMS 461
-#define ERRSTRING_NEEDMOREPARAMS(command) command + " :Not enough parameters"
+
 //ERR_NOSUCHCHANNEL
-#define ERRCODE_NOSUCHCHANNEL 403
-#define ERRSTRING_NOSUCHCHANNEL(channel) channel + " :No such channel"
+
 /*	ERR_TOOMANYCHANNELS
 **	Sent to a user when they have joined the maximum
 **  number of allowed channels and they try to join
@@ -49,9 +47,13 @@
 #define ERRCODE_BADCHANNELKEY 475
 #define ERRSTRING_BADCHANNELKEY(channel) channel + " :Cannot join channel (+k)"
 //ERR_BADCHANMASK
-#define ERRCODE_BADCHANMASK 476
-#define ERRSTRING_BADCHANMASK(channel) channel + " :Bad Channel Mask"
 
+
+#define RPLCODE_NOTOPIC 331
+#define RPLSTRING_NOTOPIC(Channel) "No topic is set"
+
+#define RPLCODE_TOPIC 332
+#define RPLSTRING_TOPIC(channelName, topic) channelName + " :" + topic
 class CmdJoin
 {
 public:
@@ -62,8 +64,8 @@ public:
 	void execute(const CommandData &cmd);
 
 private:
-	bool isValidChannelName(std::string name);
-	std::vector<std::string> split(const std::string& s, char delimiter);
+	void tryJoinChannel(const std::string& channelName, const std::string& key, Client* client, const CommandData& cmd);
+	
 	std::map<std::string, std::string> CmdJoin::getChannelListFromData(const CommandData& cmd);
 	ChannelManager *_channelManager;
 };

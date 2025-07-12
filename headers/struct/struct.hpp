@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 17:41:12 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 21:19:53 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 21:28:23 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ struct ClientData {
 	bool isauthenticated; // Authentication status of the client
 	bool isoperator; // Operator status of the client
 	char authstatus; // bitmask representing authentication status (has given password, has given username, has given nickname)
-	std::vector<std::string> channels; // List of channels joined by the client
+	std::set<std::string> channels; // List of channels joined by the client
 };
 
 struct CommandData {

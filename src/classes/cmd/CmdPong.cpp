@@ -1,29 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CmdPass.hpp                                        :+:      :+:    :+:   */
+/*   CmdPong.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/09 13:07:46 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/12 00:53:42 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/12 00:57:15 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMDPASS_HPP
-#define CMDPASS_HPP
+#include "cmd/CmdPong.hpp"
 
-#include "utils/CmdUtils.hpp"
+CmdPong::CmdPong() {}
 
-class CmdPass {
-public:
-	CmdPass();
-	~CmdPass();
-	CmdPass(const CmdPass &other);
-	CmdPass &operator=(const CmdPass &other);
-	void execute(const CommandData &cmd);
-private:
-};
+CmdPong::~CmdPong() {}
 
+CmdPong::CmdPong(const CmdPong &other) {
+	*this = other;
+}
 
-#endif
+CmdPong &CmdPong::operator=(const CmdPong &other) {
+	(void)other;
+	return *this;
+}
+
+void CmdPong::execute(const CommandData &cmd) 
+{
+	cmd.client->setPingStatus(PONG_RECEIVED);
+}

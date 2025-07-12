@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CmdPass.hpp                                        :+:      :+:    :+:   */
+/*   CmdPart.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/09 13:07:46 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/12 01:12:53 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/12 01:13:43 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMDPASS_HPP
-#define CMDPASS_HPP
+#include "cmd/CmdPart.hpp"
 
-#include "utils/CmdUtils.hpp"
+CmdPart::CmdPart() {}
 
-class CmdPass {
-public:
-	CmdPass();
-	~CmdPass();
-	CmdPass(const CmdPass &other);
-	CmdPass &operator=(const CmdPass &other);
-	void execute(const CommandData &cmd);
-private:
-};
+CmdPart::CmdPart(CmdPart const & src) { (void)src; }
 
+CmdPart::~CmdPart() {}
 
-#endif
+CmdPart & CmdPart::operator=(CmdPart const & rhs) { (void)rhs; return *this; }
+
+void CmdPart::execute(const CommandData &cmd) {}
+

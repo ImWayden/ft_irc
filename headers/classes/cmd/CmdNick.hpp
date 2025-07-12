@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:37:41 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 19:20:12 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include "manager/ClientManager.hpp"
 #include "ressources/r_strings.hpp"
-#include "Cmd.hpp"
+#include "utils/CmdUtils.hpp"
 
 #define NICK_MIN_LENGTH 1
 #define NICK_MAX_LENGTH 9
@@ -34,7 +34,8 @@
 
 class CmdNick {
 public:
-	CmdNick(ClientManager* clientManager);
+	CmdNick();
+	CmdNick(ClientManager& clientManager);
 	~CmdNick();
 	CmdNick(const CmdNick &other);
 	CmdNick &operator=(const CmdNick &other);

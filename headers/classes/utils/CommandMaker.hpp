@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 03:43:12 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 22:55:45 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 23:38:51 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,6 @@ public:
 	static CommandData msgToCommand(Client* client, ClientMessage_t* input);
 	
 private:
-	CommandMaker();
-	~CommandMaker();
-
 	static void parseCommand(std::string& input, CommandData& cmd);
 	static uint32_t hashCommand(const std::string& cmd);
 	static void findNextToken(std::string &input, std::string::size_type& pos, std::string& output);

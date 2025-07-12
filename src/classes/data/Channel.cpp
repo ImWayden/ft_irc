@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 01:38:01 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:49:30 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 21:35:00 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,10 @@ bool Channel::isInviteOnly() const {
 
 bool Channel::isInvited(Client *client) const {
 	return (_invited.find(client) != _invited.end());
+}
+
+bool Channel::isOperator(Client *client) const {
+	return (_operators.find(client) != _operators.end());
 }
 
 bool Channel::hasKey() const {

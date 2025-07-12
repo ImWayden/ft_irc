@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:07:18 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/10 01:41:36 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/12 21:34:50 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ Channel(const std::string &name, const std::string &key);
 	bool isBanned(Client *client) const;
 	bool isInviteOnly() const;
 	bool isInvited(Client *client) const;
+	bool isOperator(Client *client) const;
 	
 	bool hasKey() const;
 
