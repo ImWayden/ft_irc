@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:59:57 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 02:30:27 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 17:33:27 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,14 +81,14 @@ private:
 	ClientData _data; // Client data structure
 	IPollControl *_pollcontroller;
 	void readSocket();
-	bool writeSocket(std::string& msg);
+	void writeSocket(std::string& msg);
 	
 	void makePrefix();
 
 	std::string _buffer; // Buffer for incoming data
 	std::vector<ClientMessage_t> _msg_received; // List of messages from the client
 	std::deque<ServerMessage_t> _msg_tosend; // List of messages to write back to the client
-
+	std::string _buffer_tosend;
 	char _quit_status;
 	char _auth_status;
 	char _ping_status;

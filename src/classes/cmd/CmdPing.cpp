@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:04:21 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 20:19:27 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 17:51:26 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,5 @@ void	CmdPing::execute(const CommandData &cmd) {
 	
 	// do i really need this?
 	// need to check the doc on how to set up pong  answer to this
-	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, PONG, _servername));
+	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, 0, _servername, "PONG"));
 }

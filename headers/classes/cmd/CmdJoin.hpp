@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:14:31 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:42:22 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 18:39:26 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,6 @@
 #define ERRSTRING_BADCHANNELKEY(channel) channel + " :Cannot join channel (+k)"
 //ERR_BADCHANMASK
 
-
-#define RPLCODE_NOTOPIC 331
-#define RPLSTRING_NOTOPIC(Channel) "No topic is set"
-
-#define RPLCODE_TOPIC 332
-#define RPLSTRING_TOPIC(channelName, topic) channelName + " :" + topic
 class CmdJoin
 {
 public:

@@ -37,6 +37,15 @@
 #define ERRCODE_USERNOTONCHANNEL 441
 #define ERRSTRING_USERNOTONCHANNEL(user, channel) user + " " + channel + " :They aren't on that channel"
 
+#define ERRCODE_ALREADYREGISTRED 462
+#define ERRSTRING_ALREADYREGISTRED ":Unauthorized command (already registered)"
+
+#define RPLCODE_NOTOPIC 331
+#define RPLSTRING_NOTOPIC(Channel) "No topic is set"
+
+#define RPLCODE_TOPIC 332
+#define RPLSTRING_TOPIC(channelName, topic) channelName + " :" + topic
+
 #define R_ABNF_DIGIT "0123456789"
 #define R_ABNF_ALPHA_CAP "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define R_ABNF_ALPHA "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:33:37 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 11:16:59 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 17:33:40 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,6 @@ void Client::readSocket() {
 	else {
 		//EAGAIN ETC, read when i should not have, i'll consider the client is trolling and will disconnect him 
 	}
-	
-	
 }
 
 //parse the raw data partially prepare CommandData struct return true if a full new msg is received
@@ -155,20 +153,16 @@ bool Client::receiveMessages() {
 	return new_msg;
 }
 
-bool Client::writeSocket(std::string& msg) {
+//i kept the msg variable due to old implementation but i could directly use 
+//_buffer_tosend
+void Client::writeSocket(std::string& msg) {
 	ssize_t bytesSent = send(_data.fd, msg.c_str(), msg.size(), 0); //need to check the man
 
 	if (bytesSent > 0) {
-		// Tout ou partie du message a été envoyé (tu peux gérer les envois partiels ici si tu veux)
-		if (static_cast<size_t>(bytesSent) < msg.size()) {
-			msg.erase(0, bytesSent);
-			return false;
-		}
-		return true;
+		msg.erase(0, bytesSent);
 	}
 	else if (bytesSent == 0) {
-		// sent nothing ?? 
-		return false;
+		// sent encoutered an error with client
 	}
 	else {
 		//tried to write when the socket is not writable should not happen, same as reading i'll consider this error clients fault
@@ -183,27 +177,18 @@ void Client::setQuitStatus(int quit_status) {
 
 //need to change the logic and use a single big f buffer for all messages
 void Client::sendMessages() {
-	while(_msg_tosend.size()) 
-	{
-		std::string msg = _msg_tosend.front();
-		if(writeSocket(msg))
-			_msg_tosend.pop_front();
-		else
-			break;
-	}
-	if(!_msg_tosend.size());
+	writeSocket(_buffer_tosend);
+	if(!_buffer_tosend.size())
 	{
 		_pollcontroller->setEvent(_data.fd, POLLIN);
 		if(_quit_status & QUITTING)
 			setQuitStatus(QUITTING_DONE);
 	}
-
-	
 	return;
 }
 
 void Client::addMessage_out(const std::string &message) {
-	_msg_tosend.push_back(message);
+	_buffer_tosend += message;
 	_pollcontroller->setEvent(_data.fd, POLLOUT | POLLIN); 
 	//add way to signal pollfd should check for POLLOUT
 }

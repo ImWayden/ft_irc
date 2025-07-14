@@ -6,14 +6,13 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 03:51:58 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 19:47:48 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 17:41:35 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
-
 #include "cmd/CmdUser.hpp"
+
+
 
 bool CmdUser::checkusername(const std::string &username) {
 	return(!(username.length() < NICK_MIN_LENGTH || username.find_first_of(R_ABNF_USER_NOUSECHAR) != std::string::npos));
@@ -26,7 +25,7 @@ void CmdUser::execute(const CommandData &cmd)
 	if(cmd.args.size() < 1 || !checkusername(cmd.args[0]))
 	{
 		//ERR_NEEDMOREPARAMS
-		client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, 461, cmd.cmd + " :Not enough parameters")); //add defines for errors or enum perhaps
+		client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NEEDMOREPARAMS, ERRSTRING_NEEDMOREPARAMS(cmd.cmd))); //add defines for errors or enum perhaps
 		return;
 	}
 	if(isAuthenticated == true)
