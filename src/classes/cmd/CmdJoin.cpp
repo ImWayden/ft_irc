@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:15:42 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/13 13:42:24 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 21:47:07 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void CmdJoin::execute(const CommandData& cmd)
 		return;
 	}
 	if (cmd.args[0] == "0") {
-		std::string message = MessageMaker::MessageGenerator(cmd, true, 0, ":disconnected from the server");
+		std::string message = MessageMaker::MessageGenerator(cmd, true, 0, ":disconnected from the channel");
 		_channelManager->removeClientFromAllChannels(cmd.client, message);
 		// probably more to do like signaling to channels a client as left.
 		return;

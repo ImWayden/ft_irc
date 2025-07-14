@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 19:44:07 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 18:14:31 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 20:30:59 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 CmdNick::CmdNick() {}
 
-CmdNick::CmdNick(ClientManager& clientManager) : _clientManager(&clientManager) {}
+CmdNick::CmdNick(ClientManager& clientManager, std::string serverpassword) : _clientManager(&clientManager), _serverpassword(serverpassword) {}
 
 CmdNick::~CmdNick() {}
 
@@ -61,11 +61,15 @@ void CmdNick::execute(const CommandData &cmd)
 	}
 	client->setAuthStatus(NICK_RECEIVED);
 	client->setNickname(cmd.args[0]);
-
 	if(!isAuthenticated && client->isAuthenticated())
 	{
-		//methode to check if password is correct and to prepare a commanddata to send to the client
-		
+		if(client->getPassword() != _serverpassword)
+		{
+			client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_PASSWDMISMATCH, ERRSTRING_PASSWDMISMATCH));
+			client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, 0, ":disconnected from the server", "ERROR"));
+			client->setQuitStatus(QUITTING);
+			return;
+		}
 	}
 	//ERR_RESTRICTED no need to implement since we don't have to implement mode for users
 	//ERR_UNAVAILRESOURCE is it really necessary ? i don't think i will implement the lock on username after changing or deconnecting

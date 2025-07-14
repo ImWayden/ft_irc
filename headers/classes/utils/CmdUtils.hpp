@@ -46,6 +46,11 @@
 #define RPLCODE_TOPIC 332
 #define RPLSTRING_TOPIC(channelName, topic) channelName + " :" + topic
 
+#define ERRCODE_PASSWDMISMATCH 464
+#define ERRSTRING_PASSWDMISMATCH ":Password incorrect"
+
+
+
 #define R_ABNF_DIGIT "0123456789"
 #define R_ABNF_ALPHA_CAP "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define R_ABNF_ALPHA "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -59,7 +64,7 @@
 class CmdUtils {
 public:
 	static bool isValidChannelName(std::string name);
-	static std::map<std::string, std::string> CmdUtils::getChannelListFromData(const CommandData& cmd);
+	static std::map<std::string, std::string> getChannelListFromData(const CommandData& cmd);
 	static std::vector<std::string> split(const std::string& s, char delimiter);
 private:
 };

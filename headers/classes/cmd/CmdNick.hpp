@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:37:41 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 20:27:25 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 class CmdNick {
 public:
 	CmdNick();
-	CmdNick(ClientManager& clientManager);
+	CmdNick(ClientManager& clientManager, std::string server_password);
 	~CmdNick();
 	CmdNick(const CmdNick &other);
 	CmdNick &operator=(const CmdNick &other);
@@ -44,6 +44,7 @@ public:
 private:
 	bool checknickname(const std::string &nickname);
 	ClientManager* _clientManager;
+	std::string _serverpassword;
 };
 
 

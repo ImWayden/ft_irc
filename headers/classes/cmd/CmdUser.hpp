@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 20:20:43 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:37:59 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 20:26:49 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,14 @@
 class CmdUser {
 public:
 	CmdUser();
+	CmdUser(std::string serverpassword);
 	~CmdUser();
 	CmdUser(const CmdUser &other);
 	CmdUser &operator=(const CmdUser &other);
 	void execute(const CommandData &cmd);
 private:
 	bool checkusername(const std::string &username);
+	std::string _serverpassword;
 };
 
 
