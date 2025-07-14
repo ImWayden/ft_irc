@@ -32,9 +32,6 @@ bool CmdUtils::isValidChannelName(std::string name)
 }
 
 
-
-
-
 std::map<std::string, std::string> CmdUtils::getChannelListFromData(const CommandData& cmd)
 {
 	std::map<std::string, std::string> channelList;
@@ -47,8 +44,8 @@ std::map<std::string, std::string> CmdUtils::getChannelListFromData(const Comman
 		std::string key = (i < keys.size()) ? keys[i] : "";
 		if(!isValidChannelName(name))
 		{
-			//ERR_NOSUCHCHANNEL (403)
-			cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NOSUCHCHANNEL, ERRSTRING_NOSUCHCHANNEL(name)));
+			//ERRCODE_BADCHANMASK (476)
+			cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_BADCHANMASK, ERRSTRING_BADCHANMASK(name)));
 			continue;
 		}
 		else

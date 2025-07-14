@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:33:37 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 22:24:45 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 11:16:59 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,6 @@ bool Client::isAuthenticated() const {
 }
 
 
-void Client::addMessage_out(const std::string &message) {
-	_msg_tosend.push_back(message);
-	_pollcontroller->setEvent(_data.fd, POLLOUT | POLLIN); 
-	//add way to signal pollfd should check for POLLOUT
-}
 
 std::vector<ClientMessage_t>* Client::getMsgReceived() {
 	return &_msg_received;
@@ -120,26 +115,25 @@ void Client::readSocket() {
 	char recvbuffer[BUFFER_SIZE];
 	ssize_t bytesRead;
 
-	while (true) {
-		bytesRead = recv(_data.fd, recvbuffer, BUFFER_SIZE, 0);
+	//it seems retarded to do one read at a time and wait for the next poll event
+	// when i can just wait for a pollin event and read as much as i can in the socket
+	// and stop when my read is less than the buffer size (aka when i have no more to read)
+	// only probleme is the rare case of having exactly BUFFER_SIZE bytes in the socket meaning i'll have to make a useless read
+	// which is a waste of resources but it could save some polls and could be worth it if i wasn't 
+	// reading 1024 bytes at a time when an average message is like 50 bytes or so
 
-		if (bytesRead > 0) {
-			appendToBuffer(std::string(recvbuffer, bytesRead));
-		}
-		else if (bytesRead == 0) {
-			// Connexion fermée proprement par le client
-			// Logique de déconnexion ici ??
-			break;
-		}
-		else {
-			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				break;
-			} else {
-				perror("recv");
-				break;
-			}
-		}
+	bytesRead = recv(_data.fd, recvbuffer, BUFFER_SIZE, 0);
+	if (bytesRead > 0) {
+		appendToBuffer(std::string(recvbuffer, bytesRead));
 	}
+	else if (bytesRead == 0) {
+		// Connexion fermée proprement par le client
+		// Logique de déconnexion ici ??
+	}
+	else {
+		//EAGAIN ETC, read when i should not have, i'll consider the client is trolling and will disconnect him 
+	}
+	
 	
 }
 
@@ -177,19 +171,8 @@ bool Client::writeSocket(std::string& msg) {
 		return false;
 	}
 	else {
-		switch (errno) {
-			case EAGAIN:
-				// Le socket est non-bloquant et ne peut pas envoyer maintenant ne devrait jamais se produire vu que l'on demande POLLOUT ?
-				return false;
-			case EPIPE:
-			case ECONNRESET:
-				// La connexion a disparu
-				return false;
-
-			default:
-				//other errors
-				return false;
-		}
+		//tried to write when the socket is not writable should not happen, same as reading i'll consider this error clients fault
+		// and delete him
 	}
 }
 
@@ -197,6 +180,8 @@ void Client::setQuitStatus(int quit_status) {
 	_quit_status |= quit_status;
 }
 
+
+//need to change the logic and use a single big f buffer for all messages
 void Client::sendMessages() {
 	while(_msg_tosend.size()) 
 	{
@@ -215,6 +200,12 @@ void Client::sendMessages() {
 
 	
 	return;
+}
+
+void Client::addMessage_out(const std::string &message) {
+	_msg_tosend.push_back(message);
+	_pollcontroller->setEvent(_data.fd, POLLOUT | POLLIN); 
+	//add way to signal pollfd should check for POLLOUT
 }
 
 //TODO : client add setAuthStatus that take a bit mask, setPassword to sert the client data.password and isauthenticated to get authentification state fast.

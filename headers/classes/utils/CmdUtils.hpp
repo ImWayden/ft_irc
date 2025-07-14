@@ -34,6 +34,9 @@
 #define ERRCODE_CHANOPRIVSNEEDED 482
 #define ERRSTRING_CHANOPRIVSNEEDED(channel) channel + " :You're not channel operator"
 
+#define ERRCODE_USERNOTONCHANNEL 441
+#define ERRSTRING_USERNOTONCHANNEL(user, channel) user + " " + channel + " :They aren't on that channel"
+
 #define R_ABNF_DIGIT "0123456789"
 #define R_ABNF_ALPHA_CAP "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define R_ABNF_ALPHA "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

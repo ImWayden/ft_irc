@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:20:03 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/13 00:09:24 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/13 20:46:31 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,6 @@
 #include "utils/CmdUtils.hpp"
 #include "manager/ChannelManager.hpp"
 #include "manager/ClientManager.hpp"
-
-
-#define ERRCODE_USERNOTONCHANNEL 441
-#define ERRSTRING_USERNOTONCHANNEL(user, channel) user + " " + channel + " :They aren't on that channel"
 
 class CmdKick
 {

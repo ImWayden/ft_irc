@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 01:38:01 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 21:35:00 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 00:01:40 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Channel &Channel::operator=(const Channel &other) {
 void Channel::addClient(Client *client) {
 	
 	_clients.insert(client);
-	if(_clients.size() == MAX_CLIENTS)  // need to check if max client is modddable on runtime
+	if(_clients.size() == _maxClients)
 		_isFull = true;
 }
 
@@ -53,6 +53,10 @@ void Channel::addOperator(Client *client) {
 	if(_clients.find(client) == _clients.end()) //check if client is in the channel
 		addClient(client);
 	_operators.insert(client);
+}
+
+void Channel::removeOperator(Client *client) {
+	_operators.erase(client);
 }
 
 void Channel::removeClient(Client *client) {
@@ -102,6 +106,10 @@ void Channel::setName(const std::string &name) {
 
 void Channel::setTopic(const std::string &topic) {
 	_topic = topic;
+}
+
+void Channel::setLimit(int limit) {
+	_maxClients = limit;
 }
 
 std::string Channel::getKey() const {

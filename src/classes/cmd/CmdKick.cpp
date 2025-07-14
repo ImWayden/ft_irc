@@ -6,17 +6,24 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:22:47 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/13 00:16:55 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/13 12:41:37 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cmd/CmdKick.hpp"
 
 CmdKick::CmdKick( void ) {}
+CmdKick::CmdKick(ChannelManager *channelManager, ClientManager *clientManager) : _channelManager(channelManager), _clientManager(clientManager) {}
 CmdKick::CmdKick( const CmdKick & src ) { *this = src; }
 CmdKick::~CmdKick( void ) {}
-CmdKick & CmdKick::operator=( const CmdKick & rhs ) { (void)rhs; return *this; }
-
+CmdKick & CmdKick::operator=( const CmdKick & other ) 
+{
+	if (this != &other) {
+		_channelManager = other._channelManager;
+		_clientManager = other._clientManager;
+	}
+	return *this;
+}
 
 
 void CmdKick::tryKick(std::string channel, std::string user, const CommandData & cmd) 
@@ -28,14 +35,19 @@ void CmdKick::tryKick(std::string channel, std::string user, const CommandData &
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NOSUCHCHANNEL, ERRSTRING_NOSUCHCHANNEL(channel)));
 	if(!channelPtr->isOperator(cmd.client))
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channel)));
-	
 	Client* userPtr = _clientManager->getClientByNickname(user);
 	if(cmd.client->getChannels().find(channel) == cmd.client->getChannels().end())
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NOTONCHANNEL, ERRSTRING_NOTONCHANNEL(channel)));
-	if(!channelPtr->isOperator(userPtr))
+	if(channelPtr->isOperator(userPtr))
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channel)));
 	if(userPtr == NULL || userPtr->getChannels().find(channel) == userPtr->getChannels().end())
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_USERNOTONCHANNEL, ERRSTRING_USERNOTONCHANNEL(user, channel)));
+	std::string message;
+	if(cmd.args.size() > 2 && !cmd.args[2].empty())
+		message = message = channelPtr->getName() + " " + userPtr->getNickname() + " (" + cmd.args[1] + ")";
+	else
+		message = channelPtr->getName() + " " + userPtr->getNickname() + " ( because he ugly as fuck )";
+	channelPtr->broadcast(MessageMaker::MessageGenerator(cmd, true, 0, message, "KICK"), NULL);
 	channelPtr->removeClient(userPtr);
 }
 

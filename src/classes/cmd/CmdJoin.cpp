@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:15:42 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:39:43 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/13 13:42:24 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,6 @@
 **	channelid  = 5( %x41-5A / digit )   ; 5( A-Z / 0-9 )
 */
 
-
-
-
-
-
-
 void CmdJoin::tryJoinChannel(const std::string& channelName, const std::string& key, Client* client, const CommandData& cmd) {
 		Channel* channel = NULL; //no nullptr in cpp98
 		bool isNew = false;
@@ -51,7 +45,7 @@ void CmdJoin::tryJoinChannel(const std::string& channelName, const std::string& 
 		else
 		{
 			if (channel->hasKey() && channel->getKey() != key)
-				client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_BADCHANNELKEY, ERRSTRING_BADCHANNELKEY(channelName)));
+				return client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_BADCHANNELKEY, ERRSTRING_BADCHANNELKEY(channelName)));
 			if (channel->isInviteOnly() && !channel->isInvited(client))
 				return client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_INVITEONLYCHAN, ERRSTRING_INVITEONLYCHAN(channelName)));
 			if (channel->isFull())
@@ -87,7 +81,7 @@ void CmdJoin::execute(const CommandData& cmd)
 	}
 	if (cmd.args[0] == "0") {
 		std::string message = MessageMaker::MessageGenerator(cmd, true, 0, ":disconnected from the server");
-		_channelManager->removeClientFromAllChannels(cmd.client);
+		_channelManager->removeClientFromAllChannels(cmd.client, message);
 		// probably more to do like signaling to channels a client as left.
 		return;
 	}

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:07:18 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 21:34:50 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 00:01:29 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Channel(const std::string &name, const std::string &key);
 	void addClient(Client *client);
 
 	void addOperator(Client *client);
+	void removeOperator(Client *client);
 	
 	void removeClient(Client *clientFd);
 	void broadcast(const std::string &message, Client* senderFd);
@@ -41,6 +42,7 @@ Channel(const std::string &name, const std::string &key);
 	bool isInviteOnly() const;
 	bool isInvited(Client *client) const;
 	bool isOperator(Client *client) const;
+	bool isTopicProtected() const;
 	
 	bool hasKey() const;
 
@@ -48,6 +50,8 @@ Channel(const std::string &name, const std::string &key);
 	void setKey(const std::string &key);
 	void setName(const std::string &name);
 	void setTopic(const std::string &topic);
+	void setLimit(int limit);
+	void setTopicProtected(bool isProtected);
 
 	std::string getKey() const;
 	std::string getName() const;
@@ -59,6 +63,8 @@ private:
 	bool _isFull;
 	bool _isInviteOnly;
 	bool _hasKey;
+	bool _isTopicProtected;
+	int _maxClients;
 	std::string _key;
 	std::string _name; // Name of the channel
 	std::string _topic;
