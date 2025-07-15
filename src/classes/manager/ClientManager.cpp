@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:21:09 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 21:22:25 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/15 20:40:26 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,22 @@ Client* ClientManager::getClientByNickname(std::string nickname) {
 		if (it->second.getNickname() == nickname)
 			return &it->second;
 	return NULL;
+}
+
+Client* ClientManager::getClientByUserAndHost(std::string username, std::string hostname)
+{
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+		if (it->second.getUsername() == username && it->second.getHostname() == hostname)
+			return &it->second;
+	return NULL;
+}
+
+Client* ClientManager::getClientByUsername(std::string username)
+{
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+		if (it->second.getUsername() == username)
+			return &it->second;
+	return NULL;	
 }
 
 //not optimized i should have a set of clients nicknames ready to use, but that signify adding nicknames during the nick command, annoying asf

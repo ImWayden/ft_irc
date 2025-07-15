@@ -61,6 +61,7 @@
 #define ABNF_JOIN_CHANNELID R_ABNF_ALPHA_CAP R_ABNF_DIGIT
 #define R_ABNF_USER_NOUSECHAR "\0\r\n @"
 
+
 class CmdUtils {
 public:
 	static bool isValidChannelName(std::string name);

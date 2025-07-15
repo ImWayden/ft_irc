@@ -1,0 +1,16 @@
+
+/*
+add servername on client creation
+add get_servername from client
+
+recheck the quitting flow im probably deleting thing in he wrong order
+
+make the makefile
+build and test
+
+recheck every class to see if i forgot some things like basic constructors 
+
+Add the privmsg command
+
+
+*/

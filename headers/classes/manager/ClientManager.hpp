@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:57:52 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 21:21:55 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/15 20:37:09 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ public:
 	void OnUpdateFinish();
 
 	Client* getClientByNickname(std::string nickname);
+	Client* getClientByUserAndHost(std::string username, std::string hostname);
+	Client* getClientByUsername(std::string username);
 	std::vector<Client*> getUpdClients();
 	std::vector<Client*> getQuittingClients();
 private:

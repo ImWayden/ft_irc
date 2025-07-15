@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 19:59:40 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 22:24:12 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/15 11:53:48 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,9 @@ ServerMessage_t MessageMaker::makePrefix(const CommandData &cmd, bool isFromClie
 	ServerMessage_t prefix;
 	prefix += ':';//is it usefull need to verify compatibility with get prefix?
 	if(isFromClient)
-	{
 		prefix += cmd.client->getPrefix();
-	}
 	else
-	{
-		prefix += cmd.client->getServerName(); //
-	}	
+		prefix += cmd.client->getServerName();
 	return prefix;
 }
 

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 19:45:06 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:38:54 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/14 21:50:49 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "struct/struct.hpp"
 #include <iomanip>
 
-#define PONG -19
 //no canonical form since it does not make sens on a class that is not instanciable
 class MessageMaker {
 public:
