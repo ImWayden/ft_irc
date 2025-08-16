@@ -6,11 +6,12 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 00:53:42 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 00:57:15 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/05 04:56:12 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cmd/CmdPong.hpp"
+#include "data/Client.hpp"
 
 CmdPong::CmdPong() {}
 

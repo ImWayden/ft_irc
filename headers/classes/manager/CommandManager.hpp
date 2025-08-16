@@ -6,24 +6,16 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 18:04:58 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 01:35:21 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:04:35 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMANDMANAGER_HPP
 #define COMMANDMANAGER_HPP
 
+#include "LogManager.hpp"
 #include "struct/struct.hpp"
 #include <vector>
-
-#include "ressources/r_numbers.hpp"
-#include "PasswordManager.hpp"
-#include "PortManager.hpp"
-#include "PollFDManager.hpp"
-#include "ListenerManager.hpp" 
-#include "ClientManager.hpp"
-#include "ServerManager.hpp"
-#include "utils/CommandMaker.hpp"
 
 #include "cmd/CmdPass.hpp"
 #include "cmd/CmdNick.hpp"
@@ -40,6 +32,7 @@
 #include "cmd/CmdTopic.hpp"
 #include "cmd/CmdMode.hpp"
 
+class ServerManager;
 
 /*
 PASS
@@ -70,9 +63,7 @@ public:
 	void Update(std::vector<Client *> upd_clients);
 private:
 	std::vector<int> _clientsfd_pullout_upd;
-	std::vector<CommandData> _cmds_client; // List of commands received from clients
-	std::vector<CommandData> _commands_onhold; // List of commands to be executed
-	
+	std::vector<CommandData> _cmds_client;
 	ServerManager* _serverManager;
 	/* ---    cmd part --- */
 	void executeCommand(const CommandData &cmd);
@@ -81,9 +72,8 @@ private:
 	CmdUser _cmd_user;
 	CmdJoin _cmd_join;
 	CmdQuit _cmd_quit;
-	CmdPing _cmd_ping; //need to answer pong
-	CmdPong _cmd_pong; //need to update pingstatus
-	CmdPart _cmd_part;
+	CmdPing _cmd_ping;
+	CmdPong _cmd_pong;
 	CmdPrivmsg _cmd_privmsg;
 	CmdKick _cmd_kick;
 	CmdInvite _cmd_invite;

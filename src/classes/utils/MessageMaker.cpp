@@ -6,12 +6,13 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 19:59:40 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/15 11:53:48 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 15:01:49 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils/MessageMaker.hpp"
-
+#include "data/Client.hpp"
+#include <sstream>
 
 ServerMessage_t MessageMaker::makePrefix(const CommandData &cmd, bool isFromClient){
 	ServerMessage_t prefix;
@@ -19,7 +20,7 @@ ServerMessage_t MessageMaker::makePrefix(const CommandData &cmd, bool isFromClie
 	if(isFromClient)
 		prefix += cmd.client->getPrefix();
 	else
-		prefix += cmd.client->getServerName();
+		prefix += "ircserv";//TODO replace avec soit define soit vrai servername
 	return prefix;
 }
 
@@ -41,15 +42,18 @@ ServerMessage_t MessageMaker::makeMessageCode(const CommandData &cmd, int msg_co
 	return messageCode;
 }
 
-ServerMessage_t MessageMaker::MessageGenerator(const CommandData &cmd, bool isFromClient, int msg_code, std::string param, std::string msg_string) 
+ServerMessage_t MessageMaker::MessageGenerator(std::string sender, std::string msg_code, std::string target, std::string param) 
 {
 	ServerMessage_t message;
-	message += makePrefix(cmd, isFromClient);
+	message += ":";
+	message += sender;
 	message += " ";
-	message += makeMessageCode(cmd, msg_code, msg_string);
+	message += msg_code;
 	message += " ";
-	message += param;
+	message += target;
 	message += " ";
+	if(!param.empty())
+		message += param;
 	message += "\r\n";
 	return message;
 }

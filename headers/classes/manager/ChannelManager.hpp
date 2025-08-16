@@ -6,12 +6,14 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:06:55 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 22:19:29 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:05:10 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNELMANAGER_HPP
 #define CHANNELMANAGER_HPP
+
+#include "LogManager.hpp"
 
 #include <string>
 #include <map>
@@ -45,8 +47,7 @@ public:
 
 	void addMessageToChannel(const std::string &name, ClientMessage_t message);
 private:
-	std::map<std::string, Channel> _channels; // Map to store channels by name
-	// Placeholder for channel management methods
+	std::map<std::string, Channel> _channels;
 };
 
 #endif // CHANNELMANAGER_HPP

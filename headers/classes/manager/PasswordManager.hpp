@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:01:35 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/09 01:44:33 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:18:06 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #define MAX_PASSWORD_LENGTH 64
 
 #include <string>
-
+#include "LogManager.hpp"
 class PasswordManager
 {
 public:
@@ -30,9 +30,12 @@ public:
 	
 	void setPassword(const std::string &password);
 	const std::string &getPassword() const;
+
+	bool getStatus() const;
 private:
 	bool isValidPassword(const std::string &password) const;
 	std::string _password;
+	bool _status;
 };
 
 #endif // PASSWORDMANAGER_HPP

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:20:03 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/13 20:46:31 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/28 03:14:50 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class CmdKick
 {
 public:
 	CmdKick( void );
-	CmdKick(ChannelManager *channelManager, ClientManager *clientManager );
+	CmdKick(ChannelManager &channelManager, ClientManager &clientManager );
 	CmdKick( const CmdKick & src );
 	~CmdKick( void );
 	CmdKick & operator=( const CmdKick & rhs );

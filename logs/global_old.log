@@ -1,0 +1,18 @@
+[2025-08-16_19-48-34][WARNING] Failed to bind server socket
+[2025-08-16_19-48-34][TECH] Update
+[2025-08-16_19-48-34][TECH] PollFDManager Update
+[2025-08-16_19-48-35][WARNING] SIGINT received, serveur brutally stopped
+[2025-08-16_19-48-35][INFO] === Class State ===
+Listeners count: 1
+
+-- fds (1) --
+  [0] fd=3 events=POLLIN revents=0
+
+-- upd_listeners (0) --
+
+-- upd_clients (0) --
+
+[2025-08-16_19-48-35][TECH] ListenerManager Update
+[2025-08-16_19-48-35][TECH] ClientManager Update
+[2025-08-16_19-48-35][TECH] CommandManager Update
+[2025-08-16_19-48-35][TECH] Client Manager OnUpdateFinish

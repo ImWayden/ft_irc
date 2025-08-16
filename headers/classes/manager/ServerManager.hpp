@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 17:49:32 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:26:54 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 18:36:41 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 #include "ListenerManager.hpp" 
 #include "ClientManager.hpp"
 #include "CommandManager.hpp"
-#include "ChannelManager.hpp" // Assuming ChannelManager is defined elsewhere
+#include "ChannelManager.hpp"
+#include "LogManager.hpp"
 
 #include <iostream>
 #include <sys/types.h>      // types de base (ex: ssize_t)
@@ -42,7 +43,7 @@ public:
 
 	int Init(); // Placeholder for initialization logic
 	int Update(); // Placeholder for update logic
-	int OnAccept(); // Placeholder for accept logic
+	void OnClose();
 	
 	ServerManager &operator=(const ServerManager &other);
 	const std::string &getPort() const;
@@ -51,7 +52,6 @@ public:
 	void onUpdateFinish(); // Placeholder for update finish logic
 	void dispatchNewClients(std::vector<newClient> newClients); // Handle new clients from listeners
 
-	std::string getPassword();
 	PasswordManager &getPasswordManager();
 	ClientManager &getClientManager();
 	ChannelManager &getChannelManager();

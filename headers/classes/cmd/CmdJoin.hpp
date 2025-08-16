@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:14:31 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 18:39:26 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:07:58 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,38 +29,38 @@
 **  number of allowed channels and they try to join
 **	another channel.
 */
-#define ERRCODE_TOOMANYCHANNELS 405
+#define ERRCODE_TOOMANYCHANNELS "405"
 #define ERRSTRING_TOOMANYCHANNELS(channel) channel + " :You have joined too many channels"
-//ERR_TOOMANYTARGETS
-#define ERRCODE_TOOMANYTARGETS 407
+
+#define ERRCODE_TOOMANYTARGETS "407"
 #define ERRSTRING_TOOMANYTARGETS(target, abort_msg) ((target) + " :407 recipients. " + (abort_msg))
-//ERR_CHANNELISFULL
-#define ERRCODE_CHANNELISFULL 471
+
+#define ERRCODE_CHANNELISFULL "471"
 #define ERRSTRING_CHANNELISFULL(channel) channel + " :Cannot join channel (+l)"
-//ERR_INVITEONLYCHAN
-#define ERRCODE_INVITEONLYCHAN 473
-#define ERRSTRING_INVITEONLYCHAN(channel) channel + " :Cannot join channel (+i)"
-//ERR_BANNEDFROMCHAN
-#define ERRCODE_BANNEDFROMCHAN 474 
+
+#define ERRCODE_INVITEONLYCHAN "473"
+#define ERRSTRING_INVITEONLYCHAN(channel) channel + ":Cannot join channel (+i)"
+
+#define ERRCODE_BANNEDFROMCHAN "474" 
 #define ERRSTRING_BANNEDFROMCHAN(channel) channel + " :Cannot join channel (+b)"
-//ERR_BADCHANNELKEY
-#define ERRCODE_BADCHANNELKEY 475
+
+#define ERRCODE_BADCHANNELKEY "475"
 #define ERRSTRING_BADCHANNELKEY(channel) channel + " :Cannot join channel (+k)"
-//ERR_BADCHANMASK
+
 
 class CmdJoin
 {
 public:
 	CmdJoin();
-	~CmdJoin();
+	CmdJoin(ChannelManager& channelManager);
 	CmdJoin(const CmdJoin &other);
+	~CmdJoin();
 	CmdJoin &operator=(const CmdJoin &other);
 	void execute(const CommandData &cmd);
 
 private:
 	void tryJoinChannel(const std::string& channelName, const std::string& key, Client* client, const CommandData& cmd);
-	
-	std::map<std::string, std::string> CmdJoin::getChannelListFromData(const CommandData& cmd);
+	std::map<std::string, std::string> getChannelListFromData(const CommandData& cmd);
 	ChannelManager *_channelManager;
 };
 

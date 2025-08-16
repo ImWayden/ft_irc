@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:37:18 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 23:34:39 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:04:17 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,20 @@
 #include "interfaces/IPollControl.hpp"
 #include <vector>
 #include <poll.h>
+#include <netinet/in.h>
+#include <iostream>      // std::cerr, std::cout (si besoin)
+#include <cstring>       // std::memset, strerror
+#include <string>        // std::string
+
+#include <sys/types.h>
 #include <sys/socket.h>
-#include <fcntl.h> 
+#include <netdb.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
-struct newClient {
-	struct pollfd pfd; // File descriptor for the client socket
-	struct sockaddr_storage addr; // Address of the client
-};
-
+#include "struct/struct.hpp"
+#include "LogManager.hpp"
 class ListenerManager
 {
 public:
@@ -32,12 +38,14 @@ public:
 	~ListenerManager();
 	ListenerManager &operator=(const ListenerManager &other);
 	
+
+	std::vector<int> Init(std::string port);
 	void Update(const std::vector<struct pollfd>& fds);
 	void OnUpdateFinish();
 	
 	std::vector<newClient> getnewClients();
 private:
-	std::vector<newClient> _newclients; // List of new clients to be added
+	std::vector<newClient> _newclients;
 };
 
 

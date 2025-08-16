@@ -6,27 +6,81 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:33:37 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 17:33:40 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/15 13:35:53 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "data/Client.hpp"
-
-Client::Client(int fd, IPollControl* pollController) : _data{fd, "", "", "", "", "", "", false, false, false, 0}, _buffer(""), _msg_received(), _msg_tosend(), _pollcontroller(pollController) {
-	// Constructor initializes the client with a file descriptor and empty data
+#include <iostream>
+Client::Client()
+: _data(), // Appelle constructeur par défaut de ClientData (à condition qu'il initialise bien tout)
+  _pollcontroller(NULL),
+  _buffer(""),
+  _msg_received(),
+  _msg_tosend(),
+  _buffer_tosend(""),
+  _quit_status(0),
+  _auth_status(0),
+  _ping_status(0)
+{
+	// constructeur par défaut, tout est initialisé
 }
 
-Client::Client(const Client &other) : _data(other._data), _buffer(other._buffer), _msg_received(other._msg_received) {}
-Client::~Client() {}
+Client::Client(int fd, IPollControl* pollController)
+: _data(fd), // constructeur ClientData(fd)
+  _pollcontroller(pollController),
+  _buffer(""),
+  _msg_received(),
+  _msg_tosend(),
+  _buffer_tosend(""),
+  _quit_status(0),
+  _auth_status(0),
+  _ping_status(0)
+{
+	// constructeur avec fd et pollController
+}
+
+Client::Client(const Client &other)
+: _data(other._data),
+  _pollcontroller(other._pollcontroller),
+  _buffer(other._buffer),
+  _msg_received(other._msg_received),
+  _msg_tosend(other._msg_tosend),
+  _buffer_tosend(other._buffer_tosend),
+  _quit_status(other._quit_status),
+  _auth_status(other._auth_status),
+  _ping_status(other._ping_status)
+{
+	// constructeur de copie, copie tout
+}
+
+Client::~Client() {
+	// destructeur, rien à faire si pas d'alloc dynamiques dans la classe
+}
 
 Client &Client::operator=(const Client &other) {
 	if (this != &other) {
 		_data = other._data;
+		_pollcontroller = other._pollcontroller;
 		_buffer = other._buffer;
+		_msg_received = other._msg_received;
+		_msg_tosend = other._msg_tosend;
+		_buffer_tosend = other._buffer_tosend;
+		_quit_status = other._quit_status;
+		_auth_status = other._auth_status;
+		_ping_status = other._ping_status;
 	}
 	return *this;
 }
 
+
+int Client::getFd(){
+	return _data.fd;
+}
+
+int Client::getQuitStatus(){
+	return _quit_status;
+}
 
 const std::string& Client::getNickname() const{
 	return _data.nickname;
@@ -63,7 +117,32 @@ const std::set<std::string>& Client::getChannels() const{
 
 
 void Client::setAddr(struct sockaddr_storage addr) {
-	//placeholder need to check how addr and host are linked and see if this is really necessary
+
+	char host[NI_MAXHOST];
+
+	int res = getnameinfo(
+		(struct sockaddr*)&addr,
+		sizeof(addr),
+		host,
+		sizeof(host),
+		NULL,
+		0,
+		NI_NAMEREQD
+	);
+	if (res == 0) {
+		_data.host = host;
+	} else {
+		// fallback à l'IP brute
+		char ip[INET6_ADDRSTRLEN];
+		if (addr.ss_family == AF_INET) {
+			struct sockaddr_in* s = (struct sockaddr_in*)&addr;
+			inet_ntop(AF_INET, &s->sin_addr, ip, sizeof(ip));
+		} else {
+			struct sockaddr_in6* s = (struct sockaddr_in6*)&addr;
+			inet_ntop(AF_INET6, &s->sin6_addr, ip, sizeof(ip));
+		}
+		_data.host = ip;
+	}
 }
 
 void Client::setNickname(const std::string &nickname) {
@@ -87,13 +166,15 @@ void Client::setAuthStatus(int authStatus) {
 	_auth_status |= authStatus;
 }
 
+void Client::setPingStatus(int ping_status) {
+	_ping_status |= ping_status;
+}
+
 bool Client::isAuthenticated() const {
 	if (_auth_status == FULLY_AUTHENTICATED)
 		return true;
 	return false;
 }
-
-
 
 std::vector<ClientMessage_t>* Client::getMsgReceived() {
 	return &_msg_received;
@@ -105,6 +186,10 @@ std::deque<ServerMessage_t>* Client::getMsgToSend() {
 
 void Client::joinChannel(const std::string &channel) {
 	_data.channels.insert(channel);
+}
+
+void Client::partChannel(const std::string &channel) {
+	_data.channels.erase(channel);
 }
 
 void Client::appendToBuffer(const std::string &data) {
@@ -126,12 +211,10 @@ void Client::readSocket() {
 	if (bytesRead > 0) {
 		appendToBuffer(std::string(recvbuffer, bytesRead));
 	}
-	else if (bytesRead == 0) {
+	else {
+		setQuitStatus(QUITTING_DONE);
 		// Connexion fermée proprement par le client
 		// Logique de déconnexion ici ??
-	}
-	else {
-		//EAGAIN ETC, read when i should not have, i'll consider the client is trolling and will disconnect him 
 	}
 }
 
@@ -147,6 +230,8 @@ bool Client::receiveMessages() {
     	    break;
 		outline = _buffer.substr(0, pos);
 		_buffer.erase(0, pos + 2);
+		if (outline.empty())       // <<< ignore les lignes vides
+			continue;
 		_msg_received.push_back(outline);
 		new_msg = true;
 	}
@@ -161,17 +246,18 @@ void Client::writeSocket(std::string& msg) {
 	if (bytesSent > 0) {
 		msg.erase(0, bytesSent);
 	}
-	else if (bytesSent == 0) {
+	else{
+		setQuitStatus(QUITTING_DONE);
 		// sent encoutered an error with client
-	}
-	else {
-		//tried to write when the socket is not writable should not happen, same as reading i'll consider this error clients fault
-		// and delete him
 	}
 }
 
 void Client::setQuitStatus(int quit_status) {
 	_quit_status |= quit_status;
+	if(_quit_status & QUITTING_DONE)
+		LogManager::logInfo("quit status set to QUITTING_DONE");
+	else if(_quit_status & QUITTING)
+		LogManager::logInfo("quit status set to QUITTING");
 }
 
 
@@ -193,6 +279,24 @@ void Client::addMessage_out(const std::string &message) {
 	//add way to signal pollfd should check for POLLOUT
 }
 
+
+std::string Client::toString() const {
+    std::ostringstream oss;
+    oss << "=== Client ===\n";
+    oss << _data.toString(); // affichage des données du client
+    oss << "Buffer (incoming): \"" << _buffer << "\"\n";
+    oss << "Buffer (to send): \"" << _buffer_tosend << "\"\n";
+    oss << "Messages received (" << _msg_received.size() << "):\n";
+    for (size_t i = 0; i < _msg_received.size(); ++i)
+        oss << "  [" << i << "] " << _msg_received[i] << "\n";
+    oss << "Messages to send (" << _msg_tosend.size() << "):\n";
+    for (size_t i = 0; i < _msg_tosend.size(); ++i)
+        oss << "  [" << i << "] " << _msg_tosend[i] << "\n";
+    oss << "_quit_status=" << static_cast<int>(_quit_status) 
+        << " _auth_status=" << static_cast<int>(_auth_status)
+        << " _ping_status=" << static_cast<int>(_ping_status) << "\n";
+    return oss.str();
+}
 //TODO : client add setAuthStatus that take a bit mask, setPassword to sert the client data.password and isauthenticated to get authentification state fast.
 
 

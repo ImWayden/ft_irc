@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:28:09 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 21:46:20 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:55:10 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,25 @@ CmdInvite &CmdInvite::operator=(const CmdInvite &other) {
 void CmdInvite::execute(const CommandData &cmd) {
 	Client *sender = cmd.client;
 	if(cmd.args.size() < 2)
-		return sender->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NEEDMOREPARAMS, ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
+		return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, sender->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
 	std::string receiverNick = cmd.args[0];
 	std::string channelName = cmd.args[1];
 	Client *receiver = _clientmanager->getClientByNickname(receiverNick);
 	Channel *channel = _channelmanager->getChannel(channelName);
 	if(receiver == NULL)
-		return sender->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NOSUCHNICK, ERRSTRING_NOSUCHNICK(channelName)));
+		return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOSUCHNICK, sender->getNickname(), ERRSTRING_NOSUCHNICK(channelName)));
 	std::set<std::string> senderChannels = sender->getChannels();
 	if(channel != NULL && senderChannels.find(channelName) != sender->getChannels().end())
 	{
 		if(channel->isInviteOnly() && !channel->isOperator(sender))
-			return sender->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channelName)));
+			return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, sender->getNickname(), ERRSTRING_CHANOPRIVSNEEDED(channelName)));
 		if(channel->isBanned(receiver) || receiver->getChannels().find(channelName) != receiver->getChannels().end())
-			return sender->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_USERONCHANNEL, ERRSTRING_USERONCHANNEL(receiverNick, channelName)));
+			return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_USERONCHANNEL, sender->getNickname(), ERRSTRING_USERONCHANNEL(receiverNick, channelName)));
 	}
 	else if(channel != NULL)
-		return sender->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NOTONCHANNEL, ERRSTRING_NOTONCHANNEL(channelName)));
+		return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOTONCHANNEL, sender->getNickname(), ERRSTRING_NOTONCHANNEL(channelName)));
 		
-	sender->addMessage_out(MessageMaker::MessageGenerator(cmd, false, RPL_INVITING, channelName + " " + receiverNick));
-	receiver->addMessage_out(MessageMaker::MessageGenerator(cmd, false, RPL_INVITING, channelName + " " + sender->getNickname()));
+	sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPL_INVITING, sender->getNickname(), channelName + " " + receiverNick));
+	receiver->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPL_INVITING, receiverNick, channelName + " " + sender->getNickname()));
 	channel->Invite(receiver);
-	//not managing RPL_AWAY cause idgaf
 }

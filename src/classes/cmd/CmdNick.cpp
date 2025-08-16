@@ -6,11 +6,12 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 19:44:07 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 20:30:59 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:58:46 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "classes/cmd/CmdNick.hpp"
+#include <iostream>
 
 CmdNick::CmdNick() {}
 
@@ -20,11 +21,12 @@ CmdNick::~CmdNick() {}
 
 CmdNick::CmdNick(const CmdNick &other) : _clientManager(other._clientManager) {}
 
-CmdNick &CmdNick::operator=(const CmdNick &other) {
-	if (this != &other) {
-		_clientManager = other._clientManager;
-	}
-	return *this;
+CmdNick& CmdNick::operator=(const CmdNick &other) {
+    if (this != &other) {
+        _clientManager = other._clientManager;
+        _serverpassword = other._serverpassword;
+    }
+    return *this;
 }
 
 
@@ -41,37 +43,29 @@ void CmdNick::execute(const CommandData &cmd)
 	Client *client = cmd.client;
 	bool isAuthenticated = client->isAuthenticated();
 	if(cmd.args.size() < 1)
-	{
-		//ERR_NONICKNAMEGIVEN
-		client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NONICKNAMEGIVEN, ":No nickname given"));
-		return;
-	}
+		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NONICKNAMEGIVEN, client->getNickname(), ERRSTRING_NONICKNAMEGIVEN));
 	if(!checknickname(cmd.args[0]))
-	{
-		//ERR_ERRONEUSNICKNAME
-		client->addMessage_out(MessageMaker::MessageGenerator(cmd, false,  ERRCODE_ERRONEUSNICKNAME, cmd.args[0] + " :Erroneus nickname"));
-		return;
-	}
+		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME,  ERRCODE_ERRONEUSNICKNAME, cmd.args[0], ERRSTRING_ERRONEUSNICKNAME(cmd.args[0])));
 	std::set<std::string> nicknames = _clientManager->getNicknames(); //using a set for faster search
 	if(nicknames.find(cmd.args[0]) != nicknames.end())
-	{
-		//ERR_NICKNAMEINUSE
-		client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NICKNAMEINUSE, cmd.args[0] + " :Nickname is already in use"));
-		return;
-	}
+		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NICKNAMEINUSE, cmd.args[0], ERRSTRING_NICKNAMEINUSE(cmd.args[0])));
 	client->setAuthStatus(NICK_RECEIVED);
 	client->setNickname(cmd.args[0]);
 	if(!isAuthenticated && client->isAuthenticated())
 	{
 		if(client->getPassword() != _serverpassword)
 		{
-			client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_PASSWDMISMATCH, ERRSTRING_PASSWDMISMATCH));
-			client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, 0, ":disconnected from the server", "ERROR"));
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_PASSWDMISMATCH, client->getNickname(), ERRSTRING_PASSWDMISMATCH));
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, "ERROR", ":disconnected from the server"));
 			client->setQuitStatus(QUITTING);
 			return;
 		}
+		else
+		{
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_WELCOME, client->getNickname(), RPLSTRING_WELCOME(client->getPrefix())));
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_YOURHOST, client->getNickname(), "Your host is ircserv, running version 1.0"));
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_CREATED, client->getNickname(), RPLSTRING_CREATED));
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_MYINFO, client->getNickname(), "ircserv 1.0 +i +l"));
+		}
 	}
-	//ERR_RESTRICTED no need to implement since we don't have to implement mode for users
-	//ERR_UNAVAILRESOURCE is it really necessary ? i don't think i will implement the lock on username after changing or deconnecting
-	//ERR_NICKCOLLISION no need to implement since we only have one server
 }

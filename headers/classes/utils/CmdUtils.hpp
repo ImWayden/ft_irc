@@ -19,36 +19,59 @@
 #include "utils/MessageMaker.hpp"
 #include "struct/struct.hpp"
 
-#define ERRCODE_NEEDMOREPARAMS 461
+#define SERVERNAME "ircserv"
+#define VERSION "1.0"
+#define USERMODES "+i"
+#define CHANNELMODES "+l"
+
+#define NICK_MIN_LENGTH 1
+#define NICK_MAX_LENGTH 9
+
+#define RPLCODE_WELCOME "001"
+#define RPLSTRING_WELCOME(prefix) ":Welcome to the Internet Relay Network " + prefix
+
+#define RPLCODE_YOURHOST "002"
+#define RPLSTRING_YOURHOST(servername) ":Your host is " + servername + ", running version 1.0"
+
+#define RPLCODE_CREATED "003"
+#define RPLSTRING_CREATED ":This server was created a long time ago"
+
+#define RPLCODE_MYINFO "004"
+#define RPLSTRING_MYINFO(servername, version, usermodes, channelmodes) servername + " " + version + " " + usermodes + " " + channelmodes
+
+
+#define ERRCODE_NEEDMOREPARAMS "461"
 #define ERRSTRING_NEEDMOREPARAMS(command) command + " :Not enough parameters"
 
-#define ERRCODE_NOSUCHCHANNEL 403
+#define ERRCODE_NOSUCHCHANNEL "403"
 #define ERRSTRING_NOSUCHCHANNEL(channel) channel + " :No such channel"
 
-#define ERRCODE_BADCHANMASK 476
+#define ERRCODE_BADCHANMASK "476"
 #define ERRSTRING_BADCHANMASK(channel) channel + " :Bad Channel Mask"
 
-#define ERRCODE_NOTONCHANNEL 442
+#define ERRCODE_NOTONCHANNEL "442"
 #define ERRSTRING_NOTONCHANNEL(channel) channel + " :You're not on that channel"
 
-#define ERRCODE_CHANOPRIVSNEEDED 482
+#define ERRCODE_CHANOPRIVSNEEDED "482"
 #define ERRSTRING_CHANOPRIVSNEEDED(channel) channel + " :You're not channel operator"
 
-#define ERRCODE_USERNOTONCHANNEL 441
+#define ERRCODE_USERNOTONCHANNEL "441"
 #define ERRSTRING_USERNOTONCHANNEL(user, channel) user + " " + channel + " :They aren't on that channel"
 
-#define ERRCODE_ALREADYREGISTRED 462
+#define ERRCODE_ALREADYREGISTRED "462"
 #define ERRSTRING_ALREADYREGISTRED ":Unauthorized command (already registered)"
 
-#define RPLCODE_NOTOPIC 331
-#define RPLSTRING_NOTOPIC(Channel) "No topic is set"
+#define RPLCODE_NOTOPIC "331"
+#define RPLSTRING_NOTOPIC(Channel) ":No topic is set"
 
-#define RPLCODE_TOPIC 332
+#define RPLCODE_TOPIC "332"
 #define RPLSTRING_TOPIC(channelName, topic) channelName + " :" + topic
 
-#define ERRCODE_PASSWDMISMATCH 464
+#define ERRCODE_PASSWDMISMATCH "464"
 #define ERRSTRING_PASSWDMISMATCH ":Password incorrect"
 
+#define ERRCODE_CANNOTSENDTOCHAN "404"
+#define ERRSTRING_CANNOTSENDTOCHAN(channelname) channelname + " :Cannot send to channel"
 
 
 #define R_ABNF_DIGIT "0123456789"
@@ -68,6 +91,7 @@ public:
 	static std::map<std::string, std::string> getChannelListFromData(const CommandData& cmd);
 	static std::vector<std::string> split(const std::string& s, char delimiter);
 private:
+
 };
 
 

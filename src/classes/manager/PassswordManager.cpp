@@ -6,24 +6,25 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 16:06:07 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/09 02:16:01 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:18:23 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PasswordManager.hpp"
+#include "manager/PasswordManager.hpp"
 #include "ressources/r_numbers.hpp"
 
-PasswordManager::PasswordManager() : _password("") {}
+PasswordManager::PasswordManager() : _password(""), _status(false) {}
 
-PasswordManager::PasswordManager(const std::string &password) : _password("") {
+PasswordManager::PasswordManager(const std::string &password) : _password(""), _status(false) {
 	setPassword(password);
 }
 
-PasswordManager::PasswordManager(const PasswordManager &other) : _password(other._password) {}
+PasswordManager::PasswordManager(const PasswordManager &other) : _password(other._password), _status(other._status) {}
 PasswordManager::~PasswordManager() {}
 PasswordManager &PasswordManager::operator=(const PasswordManager &other) {
 	if (this != &other) {
 		_password = other._password;
+		_status = other._status;
 	}
 	return *this;
 }
@@ -31,8 +32,10 @@ PasswordManager &PasswordManager::operator=(const PasswordManager &other) {
 void PasswordManager::setPassword(const std::string &password) {
 	if (isValidPassword(password)) {
 		_password = password;
+		_status = true;
 	} else {
-		//throw std::invalid_argument("Invalid password"); Placeholder for exception handling
+		LogManager::logError("Invalid password");
+		_status = false;
 	}
 }
 
@@ -49,4 +52,8 @@ bool PasswordManager::isValidPassword(const std::string &password) const {
 			return false;
 	}
 	return true;
+}
+
+bool PasswordManager::getStatus() const {
+	return _status;
 }

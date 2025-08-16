@@ -6,18 +6,19 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 03:58:40 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 22:55:20 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/14 12:51:33 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils/CommandMaker.hpp"
+#include <iostream>
 
 uint32_t CommandMaker::hashCommand(const std::string &cmd) {
 	if (cmd.size() < 4)
         return 0xFFFFFFFF;
     uint32_t hash = 0;
     for (size_t i = 0; i < 4; ++i) {
-		hash <<= 8; // Décale le hash de 8 bits vers la gauche
+		hash <<= 8;
         hash |= static_cast<unsigned char>(cmd[i]);
     }
     return hash;
@@ -35,7 +36,7 @@ void CommandMaker::findNextToken(std::string &input, std::string::size_type& pos
 	{
         output = input;
         input.clear();
-        pos = std::string::npos; // Pour indiquer fin
+        pos = std::string::npos;
     }
 }
 
@@ -61,9 +62,9 @@ void CommandMaker::parseCommand(std::string& input, CommandData &cmd) {
 
 CommandData CommandMaker::msgToCommand(Client* client, ClientMessage_t* input)
 {
-	CommandData cmd = {nullptr, "", "", {}, 0};
+	CommandData cmd;            // Appelle le constructeur par défaut
 	cmd.client = client;
-	parseCommand(*input, cmd);
+	parseCommand(*input, cmd);  // Remplit les autres champs
 	cmd.hash = hashCommand(cmd.cmd);
 	return cmd;
 }

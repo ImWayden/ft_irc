@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 21:54:15 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/15 20:56:52 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:57:27 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 CmdPrivmsg::CmdPrivmsg() {}
 
-CmdPrivmsg::CmdPrivmsg(ChannelManager *channelmanager, ClientManager *clientmanager) : _channelmanager(channelmanager), _clientmanager(clientmanager) {}
+CmdPrivmsg::CmdPrivmsg(ChannelManager &channelmanager, ClientManager &clientmanager) : _channelmanager(&channelmanager), _clientmanager(&clientmanager) {}
 
 CmdPrivmsg::~CmdPrivmsg() {}
 
@@ -52,17 +52,12 @@ Client* CmdPrivmsg::resolveClientTarget(const std::string& input) {
 	}
 }
 
-
-//return true if the recipient is a channel false otherwise
-// idk if i should use bool since we do not usually expect a true false statement to define a type
-// but i have only 2 type and do not need more than a bool so idk
-void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<target> &targets) {
+void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<target> &targets, const CommandData &cmd) {
 	std::vector<std::string> names = CmdUtils::split(msgtarget, ',');
 	Client *client;
 	Channel *channel;
-	recipientType type;
 	
-	for(int i = 0; i < names.size(); i++) {
+	for(size_t i = 0; i < names.size(); i++) {
 		if(CmdUtils::isValidChannelName(names[i])) {
 			channel = _channelmanager->getChannel(names[i]);
 			client = NULL;
@@ -73,8 +68,8 @@ void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<targe
 			channel = NULL;
 		}
 		else
-			client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NORECIPIENT, ERRSTRING_NORECIPIENT(cmd.cmd)));
-		targets.push_back({client, channel});
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NORECIPIENT, client->getNickname(), ERRSTRING_NORECIPIENT(cmd.cmd)));
+		targets.push_back((struct target){client, channel});
 	}
 }
 
@@ -82,19 +77,19 @@ void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<targe
 void CmdPrivmsg::execute(const CommandData &cmd) {
 	Client *client = cmd.client;
 	if(cmd.args.size() < 1 || cmd.args[0].empty())
-		return client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NORECIPIENT, ERRSTRING_NORECIPIENT(cmd.cmd)));
+		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NORECIPIENT, client->getNickname(), ERRSTRING_NORECIPIENT(cmd.cmd)));
 	if(cmd.args.size() < 2 || cmd.args[1].empty())
-		return client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERCCODE_NOTEXTTOSEND, ERRSTRING_NOTEXTTOSEND));
+		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERCCODE_NOTEXTTOSEND, client->getNickname(), ERRSTRING_NOTEXTTOSEND));
 	std::vector<target> targets;
-	msgtargetParser(cmd.args[0], targets);
+	msgtargetParser(cmd.args[0], targets, cmd);
 	std::string message = cmd.args[1];
-	for(int i = 0; i < targets.size(); i++) {
+	for(size_t i = 0; i < targets.size(); i++) {
 		if(targets[i].client != NULL)
-			targets[i].client->addMessage_out(MessageMaker::MessageGenerator(cmd, true, 0, message));
+			targets[i].client->addMessage_out(MessageMaker::MessageGenerator(client->getPrefix(), "PRIVMSG", targets[i].client->getNickname(), " :" + message));
 		else if(targets[i].channel != NULL)
-			targets[i].channel->broadcast(MessageMaker::MessageGenerator(cmd, true, 0, message), client);
+			targets[i].channel->broadcast(MessageMaker::MessageGenerator(client->getPrefix(), "PRIVMSG", targets[i].channel->getName(), " :" + message), client);
 		else
-			client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NORECIPIENT, ERRSTRING_NORECIPIENT(cmd.cmd)));
+			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NORECIPIENT, client->getNickname(), ERRSTRING_NORECIPIENT(cmd.cmd)));
 	}
 }
 

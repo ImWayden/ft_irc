@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:59:57 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 17:33:27 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:06:32 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,15 @@
 #include <string>
 #include <deque>
 #include <sys/socket.h>
-#include "struct/struct.hpp"
+#include <netdb.h>          // getnameinfo(), NI_NAMEREQD, NI_MAXHOST
+#include <unistd.h>
+#include <set>
+#include <sstream>
+#include <arpa/inet.h>
+#include "../../struct/struct.hpp"
 #include "ressources/r_numbers.hpp"
 #include "interfaces/IPollControl.hpp"
-
+#include "manager/LogManager.hpp"
 
 #define USER_RECEIVED 0b001
 #define NICK_RECEIVED 0b010
@@ -38,15 +43,14 @@
 
 class Client {
 public:
-	Client(int fd);
-	Client(int fd, IPollControl* pollController); //to add
-	Client(pollfd *fd); // loses a bit of responsibility separation between Client and pollfdmanager since client will be able to mod the pollfd is it the good choice ?
+	Client();
+	Client(int fd, IPollControl* pollController);
 	Client(const Client &other);
 	~Client();
 
 	Client &operator=(const Client &other);
 
-	const int getFd() const;
+	int getFd();
 	const std::string& getNickname() const;
 	const std::string& getUsername() const;
 	const std::string& getHostname() const;
@@ -54,7 +58,7 @@ public:
 	const std::string& getPassword() const;
 	const std::set<std::string> &getChannels() const;
 	const std::string& getServerName() const;
-	const int getQuitStatus() const;
+	int getQuitStatus();
 	
 	void setAddr(struct sockaddr_storage addr);
 	void setNickname(const std::string &nickname);
@@ -65,7 +69,7 @@ public:
 	void setQuitStatus(int quit_status);
 	void setPingStatus(int ping_status);
 	
-	std::vector<ClientMessage_t>* Client::getMsgReceived();
+	std::vector<ClientMessage_t>* getMsgReceived();
 	std::deque<ServerMessage_t>* getMsgToSend();
 	void appendToBuffer(const std::string &data);
 	bool receiveMessages();
@@ -74,11 +78,10 @@ public:
 	void addMessage_out(const std::string &message);
 	void sendMessages();
 	void joinChannel(const std::string &channel);
-	//void leaveChannel(const std::string &channel);
-	//void leaveAllChannel(const std::string &channel);
-	// Placeholder for other client-related methods
+	void partChannel(const std::string &channel);
+	std::string toString() const;
 private:
-	ClientData _data; // Client data structure
+	ClientData _data;
 	IPollControl *_pollcontroller;
 	void readSocket();
 	void writeSocket(std::string& msg);
@@ -96,6 +99,3 @@ private:
 };
 
 #endif	// CLIENT_HPP
-
-
-//TODO : client add setAuthStatus that take a bit mask, setPassword to sert the client data.password and isauthenticated to get authentification state fast.

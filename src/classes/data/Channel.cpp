@@ -6,24 +6,71 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 01:38:01 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 00:01:40 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:54:22 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "data/Channel.hpp"
 
-Channel::Channel(const std::string &name, const std::string &key) : _name(name), _key(key) 
-{
-	_isFull = false;
-	_isInviteOnly = false;
-	_hasKey = false;
-	_topic = "";
-	if(!key.empty())
-		_hasKey = true;
-}
+Channel::Channel()
+    : _name(""),
+      _key(""),
+      _topic(""),
+      _isFull(false),
+      _isInviteOnly(false),
+      _hasKey(false),
+      _isTopicProtected(false),
+      _maxClients(0),
+      _invited(),
+      _bannneds(),
+      _clients(),
+      _operators()
+{}
 
-Channel::Channel(const Channel &other) : _name(other._name), _key(other._key), _isFull(other._isFull), _isInviteOnly(other._isInviteOnly)\
-, _hasKey(other._hasKey), _topic(other._topic), _invited(other._invited), _clients(other._clients), _operators(other._operators){}
+Channel::Channel(const std::string &name)
+    : _name(name),
+      _key(""),
+      _topic(""),
+      _isFull(false),
+      _isInviteOnly(false),
+      _hasKey(false),
+      _isTopicProtected(false),
+      _maxClients(0),
+      _invited(),
+      _bannneds(),
+      _clients(),
+      _operators()
+{}
+
+Channel::Channel(const std::string &name, const std::string &key)
+    : _name(name),
+      _key(key),
+      _topic(""),
+      _isFull(false),
+      _isInviteOnly(false),
+      _hasKey(!key.empty()),
+      _isTopicProtected(false),
+      _maxClients(0),
+      _invited(),
+      _bannneds(),
+      _clients(),
+      _operators()
+{}
+
+Channel::Channel(const Channel &other)
+    : _name(other._name),
+      _key(other._key),
+      _topic(other._topic),
+      _isFull(other._isFull),
+      _isInviteOnly(other._isInviteOnly),
+      _hasKey(other._hasKey),
+      _isTopicProtected(other._isTopicProtected),
+      _maxClients(other._maxClients),
+      _invited(other._invited),
+      _bannneds(other._bannneds),
+      _clients(other._clients),
+      _operators(other._operators)
+{}
 
 Channel::~Channel() {}
 
@@ -47,6 +94,7 @@ void Channel::addClient(Client *client) {
 	_clients.insert(client);
 	if(_clients.size() == _maxClients)
 		_isFull = true;
+	LogManager::logServerTech(toString());
 }
 
 void Channel::addOperator(Client *client) {
@@ -62,13 +110,16 @@ void Channel::removeOperator(Client *client) {
 void Channel::removeClient(Client *client) {
 	_clients.erase(client);
 	_operators.erase(client); //do i need to check if it exists?
+	client->partChannel(_name);
 }
 
 void Channel::broadcast(const std::string &message, Client* senderFd) {
+	if(_clients.find(senderFd) == _clients.end())
+		return LogManager::logWarning(senderFd->getNickname() + " is not in the channel");
+
 	for (std::set<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-		if (*it != senderFd) { //not certain about this need to check if the client sends the msg to himself too
+		if(senderFd != (*it))
 			(*it)->addMessage_out(message);
-		}
 	}
 }
 
@@ -98,6 +149,10 @@ bool Channel::hasKey() const {
 
 void Channel::setKey(const std::string &key) {
 	_key = key;
+	if(!_key.empty())
+		_hasKey = true;
+	else
+		_hasKey = false;
 }
 
 void Channel::setName(const std::string &name) {
@@ -124,6 +179,10 @@ std::string Channel::getTopic() const {
 	return _topic;
 }
 
+std::set<Client *> Channel::getClients() const {
+	return _clients;
+}
+
 void Channel::Ban(Client *client) {
 	_bannneds.insert(client);
 	removeClient(client);
@@ -135,4 +194,51 @@ void Channel::setInviteOnly(bool inviteOnly) {
 
 void Channel::Invite(Client *client) {
 	_invited.insert(client);
+}
+
+void Channel::setTopicProtected(bool isProtected) {
+	_isTopicProtected = isProtected;
+}
+
+bool Channel::isTopicProtected() const {
+	return _isTopicProtected;
+}
+std::string Channel::toString() const {
+	std::ostringstream oss;
+	
+    oss << "=== Channel ===\n";
+    oss << "Name: " << _name << "\n";
+    oss << "Key: " << _key << "\n";
+    oss << "Topic: " << _topic << "\n";
+    oss << "isFull: " << (_isFull ? "true" : "false") << "\n";
+    oss << "isInviteOnly: " << (_isInviteOnly ? "true" : "false") << "\n";
+    oss << "hasKey: " << (_hasKey ? "true" : "false") << "\n";
+    oss << "isTopicProtected: " << (_isTopicProtected ? "true" : "false") << "\n";
+    oss << "maxClients: " << _maxClients << "\n";
+
+    oss << "Invited clients (" << _invited.size() << "): ";
+    for (std::set<Client *>::const_iterator it = _invited.begin(); it != _invited.end(); ++it) {
+        if (it != _invited.begin()) oss << ", ";
+        oss << (*it)->getNickname();
+    }
+    oss << "\n";
+    oss << "Banned clients (" << _bannneds.size() << "): ";
+    for (std::set<Client *>::const_iterator it = _bannneds.begin(); it != _bannneds.end(); ++it) {
+        if (it != _bannneds.begin()) oss << ", ";
+        oss << (*it)->getNickname();
+    }
+    oss << "\n";
+    oss << "Clients in channel (" << _clients.size() << "): ";
+    for (std::set<Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it) {
+        if (it != _clients.begin()) oss << ", ";
+        oss << (*it)->getNickname();
+    }
+    oss << "\n";
+    oss << "Operators (" << _operators.size() << "): ";
+    for (std::set<Client *>::const_iterator it = _operators.begin(); it != _operators.end(); ++it) {
+        if (it != _operators.begin()) oss << ", ";
+        oss << (*it)->getNickname();
+    }
+    oss << "\n";
+    return oss.str();
 }

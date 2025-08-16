@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:33:55 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 00:12:39 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 14:28:28 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 CmdMode::CmdMode() {}
 
-CmdMode::CmdMode(ChannelManager *channelManager, ClientManager *clientManager) : _channelmanager(channelManager), _clientmanager(clientManager) {}
+CmdMode::CmdMode(ChannelManager &channelManager, ClientManager &clientManager) : _channelmanager(&channelManager), _clientmanager(&clientManager) {}
 
 CmdMode::~CmdMode() {}
 
@@ -29,42 +29,49 @@ CmdMode &CmdMode::operator=(const CmdMode &rhs) {
 CmdMode::CmdMode(const CmdMode &other) : _channelmanager(other._channelmanager), _clientmanager(other._clientmanager) {}
 
 
-void CmdMode::handle_k(bool isPlus, Channel *channel, const std::string &channelName, const std::string* parameter, int &parametersUsed, const CommandData &cmd) 
+void CmdMode::handle_k(bool isPlus, Channel *channel, const std::string &channelName, const std::string* parameter, size_t &parametersUsed, const CommandData &cmd) 
 {
 	if(!isPlus)
 		channel->setKey("");
 	else if(parameter == NULL)
-		cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NEEDMOREPARAMS, ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
+		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, cmd.client->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
 	else if(channel->getKey().empty())
 	{
 		channel->setKey(*parameter);
 		parametersUsed++;
 	}
 	else
-		cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_KEYSET, ERRSTRING_KEYSET(channelName)));	
+		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_KEYSET,  cmd.client->getNickname(), ERRSTRING_KEYSET(channelName)));	
 }
 
-void CmdMode::handle_l(bool isPlus, Channel *channel, const std::string* parameter, int &parametersUsed, const CommandData &cmd) 
+void CmdMode::handle_l(bool isPlus, Channel *channel, const std::string* parameter, size_t &parametersUsed, const CommandData &cmd) 
 {
 	if(!isPlus)
 		channel->setLimit(MAX_CLIENTS);
 	else if(parameter == NULL)
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NEEDMOREPARAMS, ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, cmd.client->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
 	else
 	{
-		channel->setLimit(std::stoi(*parameter));
+		int limit;
+		std::istringstream iss(*parameter);
+		if (!(iss >> limit))
+		{
+			cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, cmd.client->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
+			return;
+		}
+		channel->setLimit(limit);
 		parametersUsed++;
 	}
 }
 
-void CmdMode::handle_o(bool isPlus, Channel *channel, const std::string &channelName, const std::string* parameter, int &parametersUsed, const CommandData &cmd) 
+void CmdMode::handle_o(bool isPlus, Channel *channel, const std::string &channelName, const std::string* parameter, size_t &parametersUsed, const CommandData &cmd) 
 {
 	Client* target = _clientmanager->getClientByNickname(*parameter);
 	
 	if(parameter == NULL)
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NEEDMOREPARAMS, ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, cmd.client->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
 	else if(target == NULL || target->getChannels().find(channelName) == target->getChannels().end())
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_USERNOTONCHANNEL, ERRSTRING_USERNOTONCHANNEL(*parameter, channelName)));
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_USERNOTONCHANNEL, cmd.client->getNickname(), ERRSTRING_USERNOTONCHANNEL(*parameter, channelName)));
 	else if(isPlus)
 		channel->addOperator(target);
 	else if (!isPlus && channel->isOperator(target)) 
@@ -75,15 +82,16 @@ void CmdMode::handle_o(bool isPlus, Channel *channel, const std::string &channel
 
 
 void CmdMode::Mode(const CommandData &cmd, Channel *channel) {
+
 	std::string channelName = cmd.args[0];
 	std::string mode = cmd.args[1];
 	std::vector<std::string> parameters(cmd.args.begin() + 2, cmd.args.end());
 	std::string* actualparameter = &parameters[0];
 	bool isPlus = false;
-	int parametersUsed = 0;
+	size_t parametersUsed = 0;
 	if(mode[0] == '+')
 		isPlus = true;
-	for(int i = 1; i < mode.length(); i++){
+	for(size_t i = 1; i < mode.length(); i++){
 		switch(mode[i]){
 			case 'i': channel->setInviteOnly(isPlus); break;
 			case 'k': handle_k(isPlus, channel, channelName, actualparameter, parametersUsed, cmd); break;
@@ -101,14 +109,14 @@ void CmdMode::Mode(const CommandData &cmd, Channel *channel) {
 
 void CmdMode::execute(const CommandData &cmd) 
 {
-	if (cmd.args.size() < 2 || cmd.args[1][0] != '+' || cmd.args[1][0] != '-')
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NEEDMOREPARAMS, ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
+	if (cmd.args.size() < 2 || (cmd.args[1][0] != '+' && cmd.args[1][0] != '-'))
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, cmd.client->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
 	std::string channelName = cmd.args[0];
 	Channel *channel = _channelmanager->getChannel(channelName);
 	if (channel == NULL)
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_NOTONCHANNEL, ERRSTRING_NOTONCHANNEL(channelName)));
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOTONCHANNEL, cmd.client->getNickname(), ERRSTRING_NOTONCHANNEL(channelName)));
 	if(!channel->isOperator(cmd.client))
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channelName)));
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, cmd.client->getNickname(), ERRSTRING_CHANOPRIVSNEEDED(channelName)));
 	Mode(cmd, channel);
 }
 

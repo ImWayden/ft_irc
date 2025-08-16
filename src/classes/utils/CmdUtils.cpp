@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "utils/CmdUtils.hpp"
-
+#include "data/Client.hpp"
 bool CmdUtils::isValidChannelName(std::string name)
 {
 	std::string channelId;
@@ -35,9 +35,10 @@ bool CmdUtils::isValidChannelName(std::string name)
 std::map<std::string, std::string> CmdUtils::getChannelListFromData(const CommandData& cmd)
 {
 	std::map<std::string, std::string> channelList;
-
+	std::vector<std::string> keys;
 	std::vector<std::string> names = CmdUtils::split(cmd.args[0], ',');
-	std::vector<std::string> keys = CmdUtils::split(cmd.args[1], ',');
+	if(cmd.args.size() > 1)
+		keys = CmdUtils::split(cmd.args[1], ',');
 
 	for (size_t i = 0; i < names.size(); ++i) {
 		std::string name = names[i];
@@ -45,7 +46,7 @@ std::map<std::string, std::string> CmdUtils::getChannelListFromData(const Comman
 		if(!isValidChannelName(name))
 		{
 			//ERRCODE_BADCHANMASK (476)
-			cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, ERRCODE_BADCHANMASK, ERRSTRING_BADCHANMASK(name)));
+			cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_BADCHANMASK, cmd.client->getNickname(), ERRSTRING_BADCHANMASK(name)));
 			continue;
 		}
 		else

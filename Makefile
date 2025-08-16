@@ -6,32 +6,36 @@
 #    By: wayden <wayden@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 16:23:49 by wayden            #+#    #+#              #
-#    Updated: 2025/07/09 01:41:59 by wayden           ###   ########.fr        #
+#    Updated: 2025/08/05 22:37:17 by wayden           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = c++
-CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -I./headers -I./headers/classes #-DDEBUG_BUILD=0
+CXXFLAGS = -Wall -Werror -Wextra -g3 -std=c++98 -I./headers -I./headers/classes -I./headers/classes/struct#-DDEBUG_BUILD=0
 
-SRCS = main.cpp
-OBJS = $(patsubst %.cpp,obj/%.o,$(SRCS))
-NAME = ircserv
+NAME     := ft_irc
 
-all: obj $(NAME)
+SRC_DIR  := src
+OBJ_DIR  := obj
 
-obj:
-	mkdir -p obj
+SRCS     := $(shell find $(SRC_DIR) -name '*.cpp')
+OBJS     := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
+
+all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-obj/%.o: %.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -rf $(OBJ_DIR)
+
+fclean: clean
+	rm -f $(NAME)
 
 re: fclean all
 
-clean:
-	rm -rf obj
-
-fclean: clean
-	rm -f $(NAME) $(DEBUG_NAME)
+.PHONY: all clean fclean re

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:23:53 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 23:37:44 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 10:02:37 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 
 
 
-#define ERRCODE_NOSUCHNICK 401
+#define ERRCODE_NOSUCHNICK "401"
 #define ERRSTRING_NOSUCHNICK(nick) nick + " :No such nick/channel"
-#define ERRCODE_USERONCHANNEL 443
+#define ERRCODE_USERONCHANNEL "443"
 #define ERRSTRING_USERONCHANNEL(nick, channel) nick + " " + channel + " :is already on channel"
-#define RPL_INVITING 341
+#define RPL_INVITING "341"
 
 class CmdInvite{
 public:

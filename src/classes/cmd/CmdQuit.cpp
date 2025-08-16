@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 03:51:02 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/12 22:22:43 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:59:23 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,14 @@ CmdQuit &CmdQuit::operator=(const CmdQuit &other) {
 void CmdQuit::execute(const CommandData &cmd) 
 {
 	std::set<std::string> channels = cmd.client->getChannels();
-	int fd = cmd.client->getFd();
 	std::string message;
 	if(cmd.args.size() > 0)
 		message = cmd.args[0];
 	else
-		message = ":disconnected from the server";
-	message = MessageMaker::MessageGenerator(cmd, true, 0, message);
+		message = "";
 	_channelManager->removeClientFromAllChannels(cmd.client, message);
-	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, 0, ":disconnected from the server", "ERROR")); //replace with ERROR msg
+	cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, "ERROR", ":disconnected from the server")); //replace with ERROR msg
 	cmd.client->setQuitStatus(QUITTING);
-	 // if following the RFC 2812 then i should probably send ERROR, if following the 1459 then i should send nothing, rfc is so vague 
 }
 
 // TODO : need to rethink about channels in client should them be stored per name or through pointers to channels

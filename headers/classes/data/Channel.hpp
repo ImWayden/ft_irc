@@ -6,14 +6,16 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:07:18 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 00:01:29 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:07:23 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "Client.hpp"
+#include "manager/LogManager.hpp"
+#include "data/Client.hpp"
+#include "utils/CmdUtils.hpp"
 #include <string>
 #include <set>
 #include <iostream>
@@ -21,9 +23,12 @@
 
 #define MAX_CLIENTS 50 //arbitrary value need to check the documentation
 
+
 class Channel {
-public:	Channel(const std::string &name);
-Channel(const std::string &name, const std::string &key);
+public:	
+	Channel();
+	Channel(const std::string &name);
+	Channel(const std::string &name, const std::string &key);
 	Channel(const Channel &other);
 	~Channel();
 	Channel &operator=(const Channel &other);
@@ -35,7 +40,6 @@ Channel(const std::string &name, const std::string &key);
 	
 	void removeClient(Client *clientFd);
 	void broadcast(const std::string &message, Client* senderFd);
-	//void listClients() const;
 
 	bool isFull() const;
 	bool isBanned(Client *client) const;
@@ -59,19 +63,22 @@ Channel(const std::string &name, const std::string &key);
 
 	void Ban(Client *client);
 	void Invite(Client *client);
+	std::string toString() const ;
+
+	std::set<Client *> getClients() const;
 private:
-	bool _isFull;
-	bool _isInviteOnly;
-	bool _hasKey;
-	bool _isTopicProtected;
-	int _maxClients;
-	std::string _key;
-	std::string _name; // Name of the channel
-	std::string _topic;
-	std::set<Client *> _invited;
-	std::set<Client *> _bannneds;
- 	std::set<Client *> _clients; // Set of client file descriptors in the channel
-	std::set<Client *> _operators; // Set of operator file descriptors in the channel
+    std::string _name;
+    std::string _key;
+    std::string _topic;
+    bool _isFull;
+    bool _isInviteOnly;
+    bool _hasKey;
+    bool _isTopicProtected;
+    size_t _maxClients;
+    std::set<Client *> _invited;
+    std::set<Client *> _bannneds;
+    std::set<Client *> _clients;
+    std::set<Client *> _operators;
 };
 
 #endif // CHANNEL_HPP

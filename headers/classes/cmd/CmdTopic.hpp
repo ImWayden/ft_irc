@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:29:16 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 18:44:41 by wayden           ###   ########.fr       */
+/*   Updated: 2025/07/28 03:16:20 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 class CmdTopic {
 public:
 	CmdTopic();
-	CmdTopic(ChannelManager *channelmanager, ClientManager *clientmanager);
+	CmdTopic(ChannelManager &channelmanager, ClientManager &clientmanager);
 	~CmdTopic();
 	CmdTopic(CmdTopic const & src);
 	CmdTopic & operator=(CmdTopic const & rhs);

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 18:32:13 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/11 22:34:41 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 18:43:10 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@
 #include <poll.h>
 #include <unistd.h> // pour close()
 #include <cstdio>   // pour perror
+#include <sstream>
 
-
+#include "interfaces/IPollControl.hpp"
+#include "LogManager.hpp"
 
 class PollFDManager : public IPollControl
 {
@@ -35,21 +37,19 @@ public:
 	
 	void removeFD(int fd);
 	void OnUpdateFinish();
-	void modifyFD(int fd, short events);
-	int Update();
+	void Update();
 
 	virtual void setEvent(int fd, short events);
 	std::vector<struct pollfd> getFds() const;
 	std::vector<struct pollfd> getUpdatedListeners() const;
 	std::vector<struct pollfd> getUpdatedClients() const;
-	// Closes all file descriptors and clears the list
-private:
 	void clearFds();
-	void closeFds();
-	std::vector<struct pollfd> fds;//total list of file descriptors
-	std::vector<struct pollfd> upd_listeners; // List of listener that need to be updated
-	std::vector<struct pollfd> upd_clients; // List of clients that need to be updated
-	int _listenersCount = 0; // Count of listener file descriptors
+private:
+	std::string toString() const;
+	std::vector<struct pollfd> fds;
+	std::vector<struct pollfd> upd_listeners;
+	std::vector<struct pollfd> upd_clients;
+	size_t _listenersCount; 
 };
 
 #endif // POLLFDMANAGER_HPP

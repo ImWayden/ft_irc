@@ -6,11 +6,12 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:04:21 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/14 17:51:26 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 19:57:00 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cmd/CmdPing.hpp"
+#include "data/Client.hpp"
 
 CmdPing::CmdPing() {}
 CmdPing::CmdPing(std::string servername) : _servername(servername) {}
@@ -23,8 +24,5 @@ CmdPing CmdPing::operator=(const CmdPing &other) {
 }
 
 void	CmdPing::execute(const CommandData &cmd) {
-	
-	// do i really need this?
-	// need to check the doc on how to set up pong  answer to this
-	cmd.client->addMessage_out(MessageMaker::MessageGenerator(cmd, false, 0, _servername, "PONG"));
+	cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, "PONG", _servername));
 }

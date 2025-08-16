@@ -1,32 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CmdUser.hpp                                        :+:      :+:    :+:   */
+/*   ErrorManager.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/09 20:20:43 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/05 04:52:12 by wayden           ###   ########.fr       */
+/*   Created: 2025/07/28 21:32:26 by wayden            #+#    #+#             */
+/*   Updated: 2025/07/28 21:33:05 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CMDUSER_HPP
-# define CMDUSER_HPP
+#ifndef ERRORMANAGER_HPP
+# define ERRORMANAGER_HPP
 
-#include "utils/CmdUtils.hpp"
-#include "data/Client.hpp"
-
-class CmdUser {
+class ErrorManager
+{
 public:
-	CmdUser();
-	CmdUser(std::string serverpassword);
-	~CmdUser();
-	CmdUser(const CmdUser &other);
-	CmdUser &operator=(const CmdUser &other);
-	void execute(const CommandData &cmd);
+	ErrorManager();
+	~ErrorManager();
+	ErrorManager(ErrorManager const & src);
+	ErrorManager & operator=(ErrorManager const & rhs);
 private:
-	bool checkusername(const std::string &username);
-	std::string _serverpassword;
+	
+
 };
 
 

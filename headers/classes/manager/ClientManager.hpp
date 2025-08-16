@@ -6,12 +6,14 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:57:52 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/15 20:37:09 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:04:57 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENTMANAGER_HPP
 #define CLIENTMANAGER_HPP
+
+#include "LogManager.hpp"
 
 #include <string>
 #include <vector>
@@ -27,12 +29,13 @@
 class ClientManager
 {
 public:
+	ClientManager();
 	ClientManager(IPollControl* pollControl);
 	ClientManager(const ClientManager &other);
 	~ClientManager();
 	ClientManager &operator=(const ClientManager &other);
-	std::set<std::string> ClientManager::getNicknames();
-	// Placeholder for client management methods
+	std::set<std::string> getNicknames();
+
 	void addClient(int fd);
 	void addClient(int fd, struct sockaddr_storage addr);
 
@@ -47,12 +50,12 @@ public:
 	std::vector<Client*> getUpdClients();
 	std::vector<Client*> getQuittingClients();
 private:
-	//std::vector<int> _clientsfd; // List of client file descriptors useless ??
-	std::map<int, Client> _clients; // Map to store client data (e.g., nicknames, channels)
-	std::vector<Client* > _upd_clients; // List of clients to be updated <Client*, std::vector<ClientMessage_t>*>
+
+	std::map<int, Client> _clients;
+	std::vector<Client* > _upd_clients;
 	std::vector<Client* > _quitting_clients;
 	IPollControl* _pollControl;
-	// Placeholder for other client-related data structures
+
 };
 
 

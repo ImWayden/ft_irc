@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:21:09 by wayden            #+#    #+#             */
-/*   Updated: 2025/07/15 20:40:26 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/14 13:13:02 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <poll.h>
 
+ClientManager::ClientManager() {}
 ClientManager::ClientManager(IPollControl* pollControl) : _pollControl(pollControl) {}
 ClientManager::ClientManager(const ClientManager &other) : _clients(other._clients)/*, _clientsfd(other._clientsfd)*/ {}
 ClientManager::~ClientManager() {}
@@ -27,34 +28,46 @@ ClientManager &ClientManager::operator=(const ClientManager &other) {
 }
 
 void ClientManager::addClient(int fd) {
-	_clients[fd] = Client(fd);
+	_clients[fd] = Client(fd, _pollControl);
 }
 
 void ClientManager::addClient(int fd, struct sockaddr_storage addr) {
 	_clients[fd] = Client(fd, _pollControl);
 	_clients[fd].setAddr(addr);
+	
+	LogManager::logInfo("Client added" + _clients[fd].toString());
 }
 
 
 void ClientManager::removeClient(int fd) {
+	LogManager::logInfo( "Client Getting Removed" + _clients[fd].toString());
 	_clients.erase(fd);
+	LogManager::logInfo("Client Removed");
 }
 
 void ClientManager::Update(const std::vector<struct pollfd> fds) {
+	LogManager::logServerTech("ClientManager Update");
 	for (size_t i = 0; i < fds.size(); ++i) {
 		int fd = fds[i].fd;
 		if (_clients.find(fd) == _clients.end()) 
 		{
-			//warning client not found
+			LogManager::logWarning("Client Not Found");
 			continue;
 		}
 		Client &client = _clients[fd];
+		//LogManager::logServerTech("Client Geting updated" + _clients[fd].toString());
 		if (fds[i].revents & POLLIN && client.receiveMessages()) 
 			_upd_clients.push_back(&client);
 		if (fds[i].revents & POLLOUT)
 			client.sendMessages();
-		if (client.getQuitStatus() == QUITTING_DONE)
+		if (client.getQuitStatus() & QUITTING_DONE || fds[i].revents & POLLHUP || fds[i].revents & POLLERR || fds[i].revents & POLLNVAL || fds[i].revents & POLLREMOVE)
+		{
+			if(!(client.getQuitStatus() & QUITTING_DONE))
+				client.setQuitStatus(QUITTING_DONE);
 			_quitting_clients.push_back(&client);
+			
+		}
+
 	}
 }
 
@@ -90,9 +103,18 @@ std::set<std::string> ClientManager::getNicknames() {
 	return nicknames;
 }
 
+std::vector<Client*> ClientManager::getUpdClients() {
+	return _upd_clients;
+}
+
+std::vector<Client*> ClientManager::getQuittingClients() {
+	return _quitting_clients;
+}
+
 void ClientManager::OnUpdateFinish() {
 	for(std::vector<Client*>::iterator it = _upd_clients.begin(); it != _upd_clients.end(); ++it)
 		(*it)->getMsgReceived()->clear();
 	_upd_clients.clear();
 	_quitting_clients.clear();
+	LogManager::logServerTech("Client Manager OnUpdateFinish");
 }
