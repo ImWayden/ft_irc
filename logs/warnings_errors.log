@@ -1,7 +1,0 @@
-[2025-08-17_21-13-16][WARNING] Failed to bind server socket
-[2025-08-17_21-17-19][WARNING] user2 changed the topic of #channel to bonsoirCommandData { prefix="", cmd="TOPIC", args=["#channel", "bonsoir"], client=user2, hash=1414484041 }
-[2025-08-17_21-18-00][WARNING] user3 changed the topic of #channel to bonjourCommandData { prefix="", cmd="TOPIC", args=["#channel", "bonjour"], client=user3, hash=1414484041 }
-[2025-08-17_21-18-10][WARNING] user2 is not in the channel
-[2025-08-17_21-18-17][WARNING] user3 is not in the channel
-[2025-08-17_21-18-22][WARNING] user1 is not in the channel
-[2025-08-17_21-18-26][WARNING] SIGINT received, serveur brutally stopped
