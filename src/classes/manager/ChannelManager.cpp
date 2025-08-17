@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 01:48:45 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 15:12:22 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 20:26:03 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void ChannelManager::removeClientFromChannels(std::set<std::string> &names, Clie
 void ChannelManager::removeClientFromAllChannels(Client* client, std::string message) {
 	std::map<std::string, Channel>::iterator it = _channels.begin();
 	while (it != _channels.end()) {
-		it->second.broadcast(MessageMaker::MessageGenerator(client->getPrefix(), "PART", !message.empty() ? message : ":disconnected from the channel"), client);
+		it->second.broadcast(MessageMaker::MessageGenerator(client->getPrefix(), "PART", it->second.getName(), !message.empty() ? message : ":disconnected from the channel"), client);
 		it->second.removeClient(client);
 		it++;
 	}

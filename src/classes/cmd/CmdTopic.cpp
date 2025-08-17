@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:31:17 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 14:50:06 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 20:53:16 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,17 +40,18 @@ void CmdTopic::execute(const CommandData &cmd)
 	if(cmd.args.size() == 1)
 	{
 		if(!topic.empty())
-			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, cmd.client->getNickname(), RPLSTRING_TOPIC(channelname, topic)));
+			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, channelname, RPLSTRING_TOPIC(channelname, topic)));
 		else
-			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_NOTOPIC, cmd.client->getNickname(), RPLSTRING_NOTOPIC(channelname)));
+			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_NOTOPIC, channelname, RPLSTRING_NOTOPIC));
 	}
 	else
 	{
 		if(!channel->isOperator(cmd.client) && channel->isTopicProtected())
-			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, cmd.client->getNickname(), ERRSTRING_CHANOPRIVSNEEDED(channelname)));
+			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channelname)));
 		LogManager::logWarning(cmd.client->getNickname() + " changed the topic of " + channelname + " to " + cmd.args[1] + cmd.toString());
 		channel->setTopic(cmd.args[1]);
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, cmd.client->getNickname(), RPLSTRING_TOPIC(channelname, channel->getTopic())));
+		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, channelname, RPLSTRING_TOPIC(channelname, channel->getTopic())));
+		channel->broadcast(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, channelname, RPLSTRING_TOPIC(channelname, channel->getTopic())), cmd.client);
 	}
 }
 

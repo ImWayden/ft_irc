@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 01:38:01 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 19:54:22 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 20:39:11 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,11 @@ void Channel::removeClient(Client *client) {
 }
 
 void Channel::broadcast(const std::string &message, Client* senderFd) {
-	if(_clients.find(senderFd) == _clients.end())
-		return LogManager::logWarning(senderFd->getNickname() + " is not in the channel");
-
+	if(_clients.find(senderFd) == _clients.end() && senderFd)
+	{
+		return LogManager::logWarning(senderFd->getNickname() + " is not in the channel");	
+	}
+	
 	for (std::set<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
 		if(senderFd != (*it))
 			(*it)->addMessage_out(message);
@@ -165,6 +167,10 @@ void Channel::setTopic(const std::string &topic) {
 
 void Channel::setLimit(int limit) {
 	_maxClients = limit;
+	if(_clients.size() >= _maxClients)
+		_isFull = true;
+	else
+		_isFull = false;
 }
 
 std::string Channel::getKey() const {
@@ -181,6 +187,38 @@ std::string Channel::getTopic() const {
 
 std::set<Client *> Channel::getClients() const {
 	return _clients;
+}
+
+std::string Channel::getModesString() const {
+    std::string modes = "+";
+
+    if (_isInviteOnly)       modes += "i";
+    if (_isTopicProtected)   modes += "t";
+    if (!_key.empty())     modes += "k";
+    if (_maxClients != MAX_CLIENTS) modes += "l"; 
+    // mode 'o' n’apparaît pas ici (il est appliqué par utilisateur, pas globalement au channel)
+
+    if (modes == "+") // si aucun mode n’est actif
+        return "";
+
+    return modes;
+}
+
+std::string Channel::getModeParams() const {
+    std::string params;
+
+    if (!_key.empty()) {
+        if (!params.empty()) params += " ";
+        params += _key;
+    }
+    if (_maxClients != MAX_CLIENTS) {
+        if (!params.empty()) params += " ";
+        std::ostringstream oss;
+        oss << _maxClients;
+        params += oss.str();
+    }
+
+    return params;
 }
 
 void Channel::Ban(Client *client) {

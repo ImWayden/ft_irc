@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:14:31 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 20:07:58 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 17:25:21 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,11 @@
 #define ERRCODE_TOOMANYCHANNELS "405"
 #define ERRSTRING_TOOMANYCHANNELS(channel) channel + " :You have joined too many channels"
 
-#define ERRCODE_TOOMANYTARGETS "407"
-#define ERRSTRING_TOOMANYTARGETS(target, abort_msg) ((target) + " :407 recipients. " + (abort_msg))
-
 #define ERRCODE_CHANNELISFULL "471"
 #define ERRSTRING_CHANNELISFULL(channel) channel + " :Cannot join channel (+l)"
 
 #define ERRCODE_INVITEONLYCHAN "473"
-#define ERRSTRING_INVITEONLYCHAN(channel) channel + ":Cannot join channel (+i)"
+#define ERRSTRING_INVITEONLYCHAN(channel) channel + " :Cannot join channel (+i)"
 
 #define ERRCODE_BANNEDFROMCHAN "474" 
 #define ERRSTRING_BANNEDFROMCHAN(channel) channel + " :Cannot join channel (+b)"

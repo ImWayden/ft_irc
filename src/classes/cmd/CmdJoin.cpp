@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:15:42 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 11:05:50 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 18:51:51 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,37 +52,37 @@ CmdJoin &CmdJoin::operator=(const CmdJoin &other) {
 
 
 void CmdJoin::tryJoinChannel(const std::string& channelName, const std::string& key, Client* client, const CommandData& cmd) {
-		Channel* channel = NULL; //no nullptr in cpp98
-		
-		channel = _channelManager->getChannel(channelName);
-		if (channel == NULL) {
-			channel = _channelManager->createChannel(channelName);
-			channel->addOperator(client);
-			channel->setKey(key); // Set only if first time
-		}
-		else
-		{
-			if (channel->hasKey() && channel->getKey() != key)
-				return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_BADCHANNELKEY, client->getNickname(), ERRSTRING_BADCHANNELKEY(channelName)));
-			if (channel->isInviteOnly() && !channel->isInvited(client))
-				return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_INVITEONLYCHAN, client->getNickname(), ERRSTRING_INVITEONLYCHAN(channelName)));
-			if (channel->isFull())
-				return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANNELISFULL, client->getNickname(), ERRSTRING_CHANNELISFULL(channelName)));
-			if (channel->isBanned(client))
-				return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_BANNEDFROMCHAN, client->getNickname(), ERRSTRING_BANNEDFROMCHAN(channelName)));
-		}
+	Channel* channel = NULL; //no nullptr in cpp98
+	
+	channel = _channelManager->getChannel(channelName);
+	if (channel == NULL) {
+		channel = _channelManager->createChannel(channelName);
+		channel->addOperator(client);
+		channel->setKey(key); // Set only if first time
+	}
+	else
+	{
+		if (channel->hasKey() && channel->getKey() != key)
+			return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_BADCHANNELKEY, client->getNickname(), ERRSTRING_BADCHANNELKEY(channelName)));
+		if (channel->isInviteOnly() && !channel->isInvited(client))
+			return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_INVITEONLYCHAN, client->getNickname(), ERRSTRING_INVITEONLYCHAN(channelName)));
+		if (channel->isFull())
+			return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANNELISFULL, client->getNickname(), ERRSTRING_CHANNELISFULL(channelName)));
+		if (channel->isBanned(client))
+			return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_BANNEDFROMCHAN, client->getNickname(), ERRSTRING_BANNEDFROMCHAN(channelName)));
+	}
 		//this part can be done in the channel Directly
-		channel->addClient(cmd.client);
-		cmd.client->joinChannel(channelName);
+	channel->addClient(cmd.client);
+	cmd.client->joinChannel(channelName);
 
-		std::string joinMsg = MessageMaker::MessageGenerator(client->getPrefix(), "JOIN", channelName);
-		channel->broadcast(joinMsg, cmd.client);
+	std::string joinMsg = MessageMaker::MessageGenerator(client->getPrefix(), "JOIN", channelName);
+	channel->broadcast(joinMsg, cmd.client);
 
-		// RPL_TOPIC (332) ou "no topic" (331)
-		if (!channel->getTopic().empty()) 
-			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, client->getNickname(), RPLSTRING_TOPIC(channelName, channel->getTopic())));
-		else 
-			return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_NOTOPIC, client->getNickname(), RPLSTRING_NOTOPIC(channelName)));
+	// RPL_TOPIC (332) ou "no topic" (331)
+	if (!channel->getTopic().empty()) 
+		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, client->getNickname(), RPLSTRING_TOPIC(channelName, channel->getTopic())));
+	else 
+		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_NOTOPIC, client->getNickname(), RPLSTRING_NOTOPIC));
 }
 
 

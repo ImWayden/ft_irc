@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:28:09 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 19:55:10 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 20:48:04 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void CmdInvite::execute(const CommandData &cmd) {
 	Client *receiver = _clientmanager->getClientByNickname(receiverNick);
 	Channel *channel = _channelmanager->getChannel(channelName);
 	if(receiver == NULL)
-		return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOSUCHNICK, sender->getNickname(), ERRSTRING_NOSUCHNICK(channelName)));
+		return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOSUCHNICK, sender->getNickname(), ERRSTRING_NOSUCHNICK(sender->getNickname())));
 	std::set<std::string> senderChannels = sender->getChannels();
 	if(channel != NULL && senderChannels.find(channelName) != sender->getChannels().end())
 	{
@@ -48,7 +48,7 @@ void CmdInvite::execute(const CommandData &cmd) {
 	else if(channel != NULL)
 		return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOTONCHANNEL, sender->getNickname(), ERRSTRING_NOTONCHANNEL(channelName)));
 		
-	sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPL_INVITING, sender->getNickname(), channelName + " " + receiverNick));
-	receiver->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPL_INVITING, receiverNick, channelName + " " + sender->getNickname()));
+	sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_INVITING, sender->getNickname(), RPLSTRING_INVITING(receiverNick, channelName)));
+	receiver->addMessage_out(MessageMaker::MessageGenerator(sender->getNickname(), "INVITE", receiverNick, channelName));
 	channel->Invite(receiver);
 }

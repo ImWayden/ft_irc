@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 15:21:09 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/14 13:13:02 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 13:08:50 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,20 +79,38 @@ Client* ClientManager::getClientByNickname(std::string nickname) {
 	return NULL;
 }
 
-Client* ClientManager::getClientByUserAndHost(std::string username, std::string hostname)
+Client* ClientManager::getClientByUserAndHost(std::string username, std::string hostname, bool &found_multiple)
 {
+	Client* client = NULL;
 	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 		if (it->second.getUsername() == username && it->second.getHostname() == hostname)
-			return &it->second;
-	return NULL;
+		{
+			if(client != NULL)
+			{
+				found_multiple = true;
+				client = NULL;
+				break;
+			}
+			client = &it->second;
+		}
+	return client;
 }
 
-Client* ClientManager::getClientByUsername(std::string username)
+Client* ClientManager::getClientByUsername(std::string username, bool &found_multiple)
 {
+	Client* client = NULL;
 	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 		if (it->second.getUsername() == username)
-			return &it->second;
-	return NULL;	
+		{
+			if(client != NULL)
+			{
+				found_multiple = true;
+				client = NULL;
+				break;
+			}
+			client = &it->second;
+		}
+	return client;
 }
 
 //not optimized i should have a set of clients nicknames ready to use, but that signify adding nicknames during the nick command, annoying asf

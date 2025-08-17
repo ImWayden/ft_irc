@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:06:55 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 20:05:10 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:20:03 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 #include "classes/data/Channel.hpp"
 #include "classes/data/Client.hpp"
 #include "ressources/r_numbers.hpp"
-#include "ressources/r_strings.hpp"
 #include "utils/MessageMaker.hpp"
 
 class ChannelManager

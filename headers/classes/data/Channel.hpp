@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:07:18 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 20:07:23 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 17:11:16 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,9 @@ public:
 	std::string getKey() const;
 	std::string getName() const;
 	std::string getTopic() const;
-
+	std::string getModesString() const;
+	std::string getModeParams() const;
+	
 	void Ban(Client *client);
 	void Invite(Client *client);
 	std::string toString() const ;

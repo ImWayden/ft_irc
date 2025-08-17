@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 02:37:41 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 20:07:42 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:19:46 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #define CMDNICK_HPP
 
 #include "manager/ClientManager.hpp"
-#include "ressources/r_strings.hpp"
 #include "utils/CmdUtils.hpp"
 
 

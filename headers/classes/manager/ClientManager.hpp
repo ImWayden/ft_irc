@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 00:57:52 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 20:04:57 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 13:05:01 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,8 @@
 #include <map>
 #include <set>
 
-#include "classes/data/Client.hpp" // Assuming Client is a class that holds client-related data
+#include "classes/data/Client.hpp" 
 
-/*
-	is responsible for adding client and updating client having received a specific event
-
-*/
 class ClientManager
 {
 public:
@@ -45,8 +41,8 @@ public:
 	void OnUpdateFinish();
 
 	Client* getClientByNickname(std::string nickname);
-	Client* getClientByUserAndHost(std::string username, std::string hostname);
-	Client* getClientByUsername(std::string username);
+	Client* getClientByUserAndHost(std::string username, std::string hostname, bool &found_multiple);
+	Client* getClientByUsername(std::string username, bool &found_multiple);
 	std::vector<Client*> getUpdClients();
 	std::vector<Client*> getQuittingClients();
 private:

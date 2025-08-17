@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:23:53 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 10:02:37 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 17:32:14 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,10 @@
 #include "manager/ClientManager.hpp"
 #include "manager/ChannelManager.hpp"
 
-
-
-#define ERRCODE_NOSUCHNICK "401"
-#define ERRSTRING_NOSUCHNICK(nick) nick + " :No such nick/channel"
 #define ERRCODE_USERONCHANNEL "443"
 #define ERRSTRING_USERONCHANNEL(nick, channel) nick + " " + channel + " :is already on channel"
-#define RPL_INVITING "341"
+#define RPLCODE_INVITING "341"
+#define RPLSTRING_INVITING(channel, nick) channel + " " + nick
 
 class CmdInvite{
 public:

@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 21:54:15 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 19:57:27 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/17 13:31:29 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,51 +29,54 @@ CmdPrivmsg & CmdPrivmsg::operator=(CmdPrivmsg const & rhs) {
 	return *this;
 }
 
-Client* CmdPrivmsg::resolveClientTarget(const std::string& input) {
+void CmdPrivmsg::resolveClientTarget(const std::string& input, target &target) {
 	size_t excl = input.find('!');
 	size_t percent = input.find('%');
 	size_t at = input.find('@');
-
+	bool found_multiple = false;
+	
 	if (excl != std::string::npos && at != std::string::npos && excl < at) {
 		std::string nick = input.substr(0, excl);
-		return _clientmanager->getClientByNickname(nick);
+		target.client = _clientmanager->getClientByNickname(nick);
 	}
 	else if (percent != std::string::npos) {
 		std::string user = input.substr(0, percent);
 		std::string host = input.substr(percent + 1);
-		return _clientmanager->getClientByUserAndHost(user, host);
+		target.client = _clientmanager->getClientByUserAndHost(user, host, found_multiple);
 	}
 	else if (at != std::string::npos) {
 		std::string user = input.substr(0, at);
-		return _clientmanager->getClientByUsername(user);
+		target.client = _clientmanager->getClientByUsername(user, found_multiple);
 	}
 	else {
-		return _clientmanager->getClientByNickname(input);
+		target.client = _clientmanager->getClientByNickname(input);
 	}
+	if (found_multiple)
+		target.error = target::TOOMANYTARGETS;
+	else if (target.client == NULL)
+		target.error = target::NOSUCHNICK;
 }
 
-void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<target> &targets, const CommandData &cmd) {
+void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<target> &targets) {
 	std::vector<std::string> names = CmdUtils::split(msgtarget, ',');
-	Client *client;
-	Channel *channel;
 	
 	for(size_t i = 0; i < names.size(); i++) {
+		target target = {NULL, NULL, names[i], target::NONE};
 		if(CmdUtils::isValidChannelName(names[i])) {
-			channel = _channelmanager->getChannel(names[i]);
-			client = NULL;
+			target.channel = _channelmanager->getChannel(names[i]);
+			if(target.channel == NULL)
+				target.error = target::NOSUCHCHANNEL;
 		}
 		else if(names[i][0] != '#' && names[i][0] != '&' && names[i][0] != '+' && names[i][0] != '%')
-		{
-			client = resolveClientTarget(names[i]);
-			channel = NULL;
-		}
+			resolveClientTarget(names[i], target);
 		else
-			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NORECIPIENT, client->getNickname(), ERRSTRING_NORECIPIENT(cmd.cmd)));
-		targets.push_back((struct target){client, channel});
+			target.error = target::NORECIPIENT;
+		targets.push_back(target);
 	}
 }
 
-
+//client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOSUCHCHANNEL, client->getNickname(), ERRSTRING_NOSUCHCHANNEL(names[i])));
+//client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NORECIPIENT, client->getNickname(), ERRSTRING_NORECIPIENT(cmd.cmd)));
 void CmdPrivmsg::execute(const CommandData &cmd) {
 	Client *client = cmd.client;
 	if(cmd.args.size() < 1 || cmd.args[0].empty())
@@ -81,15 +84,30 @@ void CmdPrivmsg::execute(const CommandData &cmd) {
 	if(cmd.args.size() < 2 || cmd.args[1].empty())
 		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERCCODE_NOTEXTTOSEND, client->getNickname(), ERRSTRING_NOTEXTTOSEND));
 	std::vector<target> targets;
-	msgtargetParser(cmd.args[0], targets, cmd);
+	msgtargetParser(cmd.args[0], targets);
 	std::string message = cmd.args[1];
 	for(size_t i = 0; i < targets.size(); i++) {
-		if(targets[i].client != NULL)
-			targets[i].client->addMessage_out(MessageMaker::MessageGenerator(client->getPrefix(), "PRIVMSG", targets[i].client->getNickname(), " :" + message));
-		else if(targets[i].channel != NULL)
-			targets[i].channel->broadcast(MessageMaker::MessageGenerator(client->getPrefix(), "PRIVMSG", targets[i].channel->getName(), " :" + message), client);
-		else
-			client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NORECIPIENT, client->getNickname(), ERRSTRING_NORECIPIENT(cmd.cmd)));
+		switch(targets[i].error)
+		{
+			case target::NONE:
+				if(targets[i].client != NULL)
+					targets[i].client->addMessage_out(MessageMaker::MessageGenerator(client->getPrefix(), "PRIVMSG", targets[i].name, " :" + message));
+				else if(targets[i].channel != NULL)
+					targets[i].channel->broadcast(MessageMaker::MessageGenerator(client->getPrefix(), "PRIVMSG", targets[i].name, " :" + message), client);
+				break;
+			case target::NORECIPIENT:
+				client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NORECIPIENT, client->getNickname(), ERRSTRING_NORECIPIENT(cmd.cmd)));
+				break;
+			case target::NOSUCHNICK:
+				client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOSUCHNICK, client->getNickname(), ERRSTRING_NOSUCHNICK(targets[i].name)));
+				break;
+			case target::NOSUCHCHANNEL:
+				client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOSUCHCHANNEL, client->getNickname(), ERRSTRING_NOSUCHCHANNEL(targets[i].name)));
+				break;
+			case target::TOOMANYTARGETS:
+				client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_TOOMANYTARGETS, client->getNickname(), ERRSTRING_TOOMANYTARGETS(targets[i].name, "too many targets")));
+				break;
+		}	
 	}
 }
 
@@ -149,6 +167,7 @@ void CmdPrivmsg::execute(const CommandData &cmd) {
                                    tolsun.oulu.fi and has the username
                                    "jto".
 
+	// Server to server messages (not required) 
    PRIVMSG $*.fi :Server tolsun.oulu.fi rebooting.
                                    ; Message to everyone on a server
                                    which has a name matching *.fi.

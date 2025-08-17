@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 17:41:12 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/14 13:02:33 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/16 20:23:18 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,23 @@
 
 class Client;
 struct newClient {
-	struct pollfd client_fd; // File descriptor for the client
-	struct sockaddr_storage addr; // Address of the client
+	struct pollfd client_fd;
+	struct sockaddr_storage addr;
 };
 
 struct ClientData {
-	int fd; // File descriptor for the client
-	std::string nickname; // Nickname of the client
-	std::string username; // Username of the client
-	std::string servername; // Server name of the client
-	std::string password; //password given by the client
-	std::string host; // Host of the client
-	std::string prefix; // Prefix of the client
-	bool hasbeenwelcomed; // Whether the client has been welcomed
-	bool isauthenticated; // Authentication status of the client
-	bool isoperator; // Operator status of the client
-	char authstatus; // bitmask representing authentication status (has given password, has given username, has given nickname)
-	std::set<std::string> channels; // List of channels joined by the client
+	int fd;
+	std::string nickname;
+	std::string username; 
+	std::string servername; 
+	std::string password; 
+	std::string host; 
+	std::string prefix;
+	bool hasbeenwelcomed; 
+	bool isauthenticated; 
+	bool isoperator;
+	char authstatus; 
+	std::set<std::string> channels; 
 	ClientData(int fd_init = -1,
                const std::string& nick = "",
                const std::string& user = "",
@@ -62,7 +62,7 @@ struct ClientData {
         isauthenticated(authenticated),
         isoperator(oper),
         authstatus(authstat),
-        channels() // initialisé vide automatiquement
+        channels() 
     {}
 	std::string toString() const {
         std::ostringstream oss;
@@ -90,13 +90,12 @@ struct ClientData {
 };
 
 struct CommandData {
-	Client* client;                    // Client data associated with the command
-	std::string prefix;                // Prefix for the command (e.g., server name, nickname)
-	std::string cmd;                   // Command name
-	std::vector<std::string> args;    // Arguments for the command
+	Client* client;
+	std::string prefix;
+	std::string cmd;
+	std::vector<std::string> args;
 	uint32_t hash;
 
-	// Constructeur par défaut pour initialisation propre en C++98
 	CommandData()
 		: client(NULL), prefix(""), cmd(""), args(), hash(0) {}
 	std::string toString() const;

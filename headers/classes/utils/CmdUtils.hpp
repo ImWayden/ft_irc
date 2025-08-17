@@ -46,6 +46,12 @@
 #define ERRCODE_NOSUCHCHANNEL "403"
 #define ERRSTRING_NOSUCHCHANNEL(channel) channel + " :No such channel"
 
+#define ERRCODE_NOSUCHNICK "401"
+#define ERRSTRING_NOSUCHNICK(nick) nick + " :No such nick/channel"
+
+#define ERRCODE_TOOMANYTARGETS "407"
+#define ERRSTRING_TOOMANYTARGETS(target, abort_msg) ((target) + " :407 recipients. " + (abort_msg))
+
 #define ERRCODE_BADCHANMASK "476"
 #define ERRSTRING_BADCHANMASK(channel) channel + " :Bad Channel Mask"
 
@@ -62,7 +68,7 @@
 #define ERRSTRING_ALREADYREGISTRED ":Unauthorized command (already registered)"
 
 #define RPLCODE_NOTOPIC "331"
-#define RPLSTRING_NOTOPIC(Channel) ":No topic is set"
+#define RPLSTRING_NOTOPIC " :No topic is set"
 
 #define RPLCODE_TOPIC "332"
 #define RPLSTRING_TOPIC(channelName, topic) channelName + " :" + topic
@@ -73,6 +79,15 @@
 #define ERRCODE_CANNOTSENDTOCHAN "404"
 #define ERRSTRING_CANNOTSENDTOCHAN(channelname) channelname + " :Cannot send to channel"
 
+#define RPLCODE_NAMREPLY "353"
+#define RPLSTRING_NAMREPLY(channel, users) channel + " :" + users
+
+#define RPLCODE_ENDOFNAMES "366"
+#define RPLSTRING_ENDOFNAMES(channel) channel + " :End of NAMES list"
+
+
+#define RPLCODE_CHANNELMODEIS "324"
+#define RPLSTRING_CHANNELMODEIS(channel, modes) channel + " " + modes
 
 #define R_ABNF_DIGIT "0123456789"
 #define R_ABNF_ALPHA_CAP "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
