@@ -6,7 +6,7 @@
 #    By: wayden <wayden@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 16:23:49 by wayden            #+#    #+#              #
-#    Updated: 2025/08/05 22:37:17 by wayden           ###   ########.fr        #
+#    Updated: 2025/08/18 15:23:44 by wayden           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ NAME     := ft_irc
 
 SRC_DIR  := src
 OBJ_DIR  := obj
+LOG_DIR  := logs
 
 SRCS     := $(shell find $(SRC_DIR) -name '*.cpp')
 OBJS     := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
@@ -32,9 +33,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	rm -rf $(OBJ_DIR)
+	@if [ -d $(LOG_DIR) ]; then rm -f $(LOG_DIR)/*.log; fi
 
 fclean: clean
 	rm -f $(NAME)
+	@if [ -d $(LOG_DIR) ]; then rm -rf $(LOG_DIR); fi
 
 re: fclean all
 

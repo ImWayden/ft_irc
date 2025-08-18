@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 21:54:15 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/17 13:31:29 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 14:32:55 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void CmdPrivmsg::resolveClientTarget(const std::string& input, target &target) {
 		target.error = target::NOSUCHNICK;
 }
 
-void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<target> &targets) {
+void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<target> &targets, Client *client) {
 	std::vector<std::string> names = CmdUtils::split(msgtarget, ',');
 	
 	for(size_t i = 0; i < names.size(); i++) {
@@ -66,6 +66,8 @@ void CmdPrivmsg::msgtargetParser(const std::string &msgtarget, std::vector<targe
 			target.channel = _channelmanager->getChannel(names[i]);
 			if(target.channel == NULL)
 				target.error = target::NOSUCHCHANNEL;
+			else if(target.channel->getClients().find(client) == target.channel->getClients().end())
+				target.error = target::CANNOTSENDTOCHAN;		
 		}
 		else if(names[i][0] != '#' && names[i][0] != '&' && names[i][0] != '+' && names[i][0] != '%')
 			resolveClientTarget(names[i], target);
@@ -84,7 +86,7 @@ void CmdPrivmsg::execute(const CommandData &cmd) {
 	if(cmd.args.size() < 2 || cmd.args[1].empty())
 		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERCCODE_NOTEXTTOSEND, client->getNickname(), ERRSTRING_NOTEXTTOSEND));
 	std::vector<target> targets;
-	msgtargetParser(cmd.args[0], targets);
+	msgtargetParser(cmd.args[0], targets, client);
 	std::string message = cmd.args[1];
 	for(size_t i = 0; i < targets.size(); i++) {
 		switch(targets[i].error)
@@ -106,6 +108,9 @@ void CmdPrivmsg::execute(const CommandData &cmd) {
 				break;
 			case target::TOOMANYTARGETS:
 				client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_TOOMANYTARGETS, client->getNickname(), ERRSTRING_TOOMANYTARGETS(targets[i].name, "too many targets")));
+				break;
+			case target::CANNOTSENDTOCHAN:
+				client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CANNOTSENDTOCHAN, client->getNickname(), ERRSTRING_CANNOTSENDTOCHAN(targets[i].name)));
 				break;
 		}	
 	}

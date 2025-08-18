@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:32:40 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 11:13:55 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 12:41:05 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #define ERRSTRING_NOCHANMODES(channel) channel + " :Channel doesn't support modes"
 
 #define ERRCODE_UNKNOWNMODE "472"
-#define ERRSTRING_UNKNOWNMODE(mode, channel) mode + " :is unknown mode char to me for" + channel
+#define ERRSTRING_UNKNOWNMODE(mode, channel) mode + " :is unknown mode char to me for " + channel
 class CmdMode
 {
 public:

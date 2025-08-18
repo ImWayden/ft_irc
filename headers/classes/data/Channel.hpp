@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 20:07:18 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/17 17:11:16 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 14:23:46 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ public:
 	void Invite(Client *client);
 	std::string toString() const ;
 
-	std::set<Client *> getClients() const;
+	const std::set<Client *>& getClients() const;
 private:
     std::string _name;
     std::string _key;

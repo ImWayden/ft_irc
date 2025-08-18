@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:22:47 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/16 15:26:25 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 13:30:56 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ void CmdKick::tryKick(std::string channel, std::string user, const CommandData &
 	Channel* channelPtr = _channelManager->getChannel(channel);
 	if(channelPtr == NULL)
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOSUCHCHANNEL, cmd.client->getNickname(), ERRSTRING_NOSUCHCHANNEL(channel)));
-	if(!channelPtr->isOperator(cmd.client))
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, cmd.client->getNickname(), ERRSTRING_CHANOPRIVSNEEDED(channel)));
-	Client* userPtr = _clientManager->getClientByNickname(user);
 	if(cmd.client->getChannels().find(channel) == cmd.client->getChannels().end())
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NOTONCHANNEL, cmd.client->getNickname(), ERRSTRING_NOTONCHANNEL(channel)));
+	if(!channelPtr->isOperator(cmd.client))
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channel)));
+	Client* userPtr = _clientManager->getClientByNickname(user);
 	if(channelPtr->isOperator(userPtr))
-		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, cmd.client->getNickname(),ERRSTRING_CHANOPRIVSNEEDED(channel)));
+		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channel)));
 	if(userPtr == NULL || userPtr->getChannels().find(channel) == userPtr->getChannels().end())
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_USERNOTONCHANNEL, cmd.client->getNickname(), ERRSTRING_USERNOTONCHANNEL(user, channel)));
 	std::string message = channelPtr->getName() + " " + userPtr->getNickname();
@@ -47,7 +47,7 @@ void CmdKick::tryKick(std::string channel, std::string user, const CommandData &
 		message += " : (" + cmd.args[2] + ")";
 	else
 		message += " : ( for absolutly no reason )";
-	channelPtr->broadcast(MessageMaker::MessageGenerator(cmd.client->getPrefix(), "KICK", message), cmd.client);
+	channelPtr->broadcast(MessageMaker::MessageGenerator(cmd.client->getPrefix(), "KICK", message), NULL);
 	channelPtr->removeClient(userPtr);
 }
 
@@ -65,12 +65,8 @@ void CmdKick::execute( const CommandData & cmd )
 		return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, client->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
 	
 	if(uniqueChannel)
-	{
-		if(CmdUtils::isValidChannelName(channels[0]) == false) 
-			return client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_BADCHANMASK, client->getNickname(), ERRSTRING_BADCHANMASK(channels[0])));
 		for(std::vector<std::string>::iterator it = users.begin(); it != users.end(); ++it)
 			tryKick(channels[0], *it, cmd);
-	}
 	else
 		for(size_t i = 0; i < channels.size(); ++i)
 			tryKick(channels[i], users[i], cmd);	

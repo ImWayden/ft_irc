@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 01:38:01 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/17 20:39:11 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 14:23:37 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ std::string Channel::getTopic() const {
 	return _topic;
 }
 
-std::set<Client *> Channel::getClients() const {
+const std::set<Client *>& Channel::getClients() const {
 	return _clients;
 }
 

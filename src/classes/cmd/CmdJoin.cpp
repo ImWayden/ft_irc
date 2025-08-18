@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 00:15:42 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/17 18:51:51 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 08:52:38 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,9 @@ void CmdJoin::tryJoinChannel(const std::string& channelName, const std::string& 
 
 	// RPL_TOPIC (332) ou "no topic" (331)
 	if (!channel->getTopic().empty()) 
-		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, client->getNickname(), RPLSTRING_TOPIC(channelName, channel->getTopic())));
+		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_TOPIC, channelName, RPLSTRING_TOPIC(channelName, channel->getTopic())));
 	else 
-		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_NOTOPIC, client->getNickname(), RPLSTRING_NOTOPIC));
+		cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_NOTOPIC, channelName, RPLSTRING_NOTOPIC));
 }
 
 

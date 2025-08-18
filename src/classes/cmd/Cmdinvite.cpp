@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:28:09 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/17 20:48:04 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 08:59:22 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void CmdInvite::execute(const CommandData &cmd) {
 	if(channel != NULL && senderChannels.find(channelName) != sender->getChannels().end())
 	{
 		if(channel->isInviteOnly() && !channel->isOperator(sender))
-			return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, sender->getNickname(), ERRSTRING_CHANOPRIVSNEEDED(channelName)));
+			return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_CHANOPRIVSNEEDED, ERRSTRING_CHANOPRIVSNEEDED(channelName)));
 		if(channel->isBanned(receiver) || receiver->getChannels().find(channelName) != receiver->getChannels().end())
 			return sender->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_USERONCHANNEL, sender->getNickname(), ERRSTRING_USERONCHANNEL(receiverNick, channelName)));
 	}
