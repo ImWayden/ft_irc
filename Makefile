@@ -6,14 +6,14 @@
 #    By: wayden <wayden@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 16:23:49 by wayden            #+#    #+#              #
-#    Updated: 2025/08/18 15:23:44 by wayden           ###   ########.fr        #
+#    Updated: 2025/08/18 18:35:26 by wayden           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CXX = c++
 CXXFLAGS = -Wall -Werror -Wextra -g3 -std=c++98 -I./headers -I./headers/classes -I./headers/classes/struct#-DDEBUG_BUILD=0
 
-NAME     := ft_irc
+NAME     := ircserv
 
 SRC_DIR  := src
 OBJ_DIR  := obj

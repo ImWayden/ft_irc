@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/12 01:33:55 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/18 13:01:18 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 19:29:41 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,10 @@ void CmdMode::handle_l(bool isPlus, Channel *channel, const std::string* paramet
 
 void CmdMode::handle_o(bool isPlus, Channel *channel, const std::string &channelName, const std::string* parameter, size_t &parametersUsed, const CommandData &cmd) 
 {
-	Client* target = _clientmanager->getClientByNickname(*parameter);
-	
 	if(parameter == NULL)
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_NEEDMOREPARAMS, cmd.client->getNickname(), ERRSTRING_NEEDMOREPARAMS(cmd.cmd)));
-	else if(target == NULL || target->getChannels().find(channelName) == target->getChannels().end())
+	Client* target = _clientmanager->getClientByNickname(*parameter);
+	if(target == NULL || target->getChannels().find(channelName) == target->getChannels().end())
 		return cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_USERNOTONCHANNEL, cmd.client->getNickname(), ERRSTRING_USERNOTONCHANNEL(*parameter, channelName)));
 	else if(isPlus)
 		channel->addOperator(target);
@@ -98,7 +97,7 @@ void CmdMode::Mode(const CommandData &cmd, Channel *channel) {
 			case 'l': handle_l(isPlus, channel, actualparameter, parametersUsed, cmd); break;
 			case 'o': handle_o(isPlus, channel, channelName, actualparameter, parametersUsed, cmd); break;
 			case 't': channel->setTopicProtected(isPlus); channel->broadcast(MessageMaker::MessageGenerator(cmd.client->getPrefix(), "MODE", channelName, (isPlus ? "+t" : "-t")), NULL); break;
-			default: cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_UNKNOWNMODE, ERRSTRING_UNKNOWNMODE(mode[i], channelName)));break;
+			default: cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, ERRCODE_UNKNOWNMODE, ERRSTRING_UNKNOWNMODE(std::string(1,mode[i]), channelName)));break;
 		};
 		if(parametersUsed < parameters.size())
 			actualparameter = &parameters[parametersUsed];
@@ -122,7 +121,7 @@ void CmdMode::execute(const CommandData &cmd)
 	if (cmd.args.size() == 1) {
         std::string modes = channel->getModesString();
         std::string params = channel->getModeParams();
-        cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_CHANNELMODEIS, target, RPLSTRING_CHANNELMODEIS(target, modes + params)));
+        cmd.client->addMessage_out(MessageMaker::MessageGenerator(SERVERNAME, RPLCODE_CHANNELMODEIS, target, RPLSTRING_CHANNELMODEIS(target, modes + " " + params)));
         return;
     }
 	if(!channel->isOperator(cmd.client))

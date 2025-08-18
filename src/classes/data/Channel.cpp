@@ -6,7 +6,7 @@
 /*   By: wayden <wayden@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 01:38:01 by wayden            #+#    #+#             */
-/*   Updated: 2025/08/18 14:23:37 by wayden           ###   ########.fr       */
+/*   Updated: 2025/08/18 19:39:31 by wayden           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,8 @@ void Channel::removeOperator(Client *client) {
 void Channel::removeClient(Client *client) {
 	_clients.erase(client);
 	_operators.erase(client); //do i need to check if it exists?
+	_invited.erase(client);
+	_bannneds.erase(client);
 	client->partChannel(_name);
 }
 
